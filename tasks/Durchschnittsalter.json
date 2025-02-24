@@ -1,0 +1,288 @@
+{
+  "id": 1740430075944,
+  "title": "Durchschnittsalter berechnen",
+  "description": "Erstelle einen PAP zur Berechnung des Durchschnittsalters mehrerer Personen. Das Programm soll mehrere Alter einlesen bis eine negative Zahl eingegeben wird, dann den Durchschnitt berechnen und ausgeben.",
+  "availableBlocks": {
+    "required": [
+      {
+        "type": "start-end",
+        "text": "Start",
+        "position": {
+          "x": 576,
+          "y": 0
+        }
+      },
+      {
+        "type": "start-end",
+        "text": "Ende",
+        "position": {
+          "x": 576,
+          "y": 672
+        }
+      },
+      {
+        "type": "process",
+        "text": "anzahl = 0",
+        "position": {
+          "x": 576,
+          "y": 192
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: alter",
+        "position": {
+          "x": 576,
+          "y": 288
+        }
+      },
+      {
+        "type": "decision",
+        "text": "alter >= 0",
+        "position": {
+          "x": 576,
+          "y": 416
+        }
+      },
+      {
+        "type": "process",
+        "text": "summe = summe + alter",
+        "position": {
+          "x": 832,
+          "y": 512
+        }
+      },
+      {
+        "type": "process",
+        "text": "durchschnitt = summe / anzahl",
+        "position": {
+          "x": 384,
+          "y": 448
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: durchschnitt",
+        "position": {
+          "x": 384,
+          "y": 544
+        }
+      },
+      {
+        "type": "input",
+        "text": "summe = 0",
+        "position": {
+          "x": 576,
+          "y": 96
+        }
+      },
+      {
+        "type": "process",
+        "text": "anzahl = anzahl + 1",
+        "position": {
+          "x": 832,
+          "y": 320
+        }
+      }
+    ],
+    "optional": [
+      {
+        "type": "process",
+        "text": "durchschnitt = alter",
+        "position": {
+          "x": 128,
+          "y": 160
+        }
+      },
+      {
+        "type": "decision",
+        "text": "alter > 100",
+        "position": {
+          "x": 128,
+          "y": 256
+        }
+      },
+      {
+        "type": "process",
+        "text": "alter = alter + 1",
+        "position": {
+          "x": 224,
+          "y": 160
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: summe",
+        "position": {
+          "x": 224,
+          "y": 256
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: maxAlter",
+        "position": {
+          "x": 224,
+          "y": 352
+        }
+      },
+      {
+        "type": "decision",
+        "text": "anzahl > 0",
+        "position": {
+          "x": 0,
+          "y": 320
+        }
+      },
+      {
+        "type": "process",
+        "text": "durchschnitt = 0",
+        "position": {
+          "x": 128,
+          "y": 64
+        }
+      }
+    ]
+  },
+  "solution": {
+    "connections": [
+      [
+        "anzahl = 0",
+        "Eingabe: alter",
+        "ja"
+      ],
+      [
+        "Eingabe: alter",
+        "alter >= 0",
+        "ja"
+      ],
+      [
+        "alter >= 0",
+        "summe = summe + alter",
+        "ja"
+      ],
+      [
+        "alter >= 0",
+        "durchschnitt = summe / anzahl",
+        "ja"
+      ],
+      [
+        "durchschnitt = summe / anzahl",
+        "Ausgabe: durchschnitt",
+        "ja"
+      ],
+      [
+        "Ausgabe: durchschnitt",
+        "Ende",
+        "ja"
+      ],
+      [
+        "Start",
+        "summe = 0",
+        "ja"
+      ],
+      [
+        "summe = 0",
+        "anzahl = 0",
+        "ja"
+      ],
+      [
+        "summe = summe + alter",
+        "anzahl = anzahl + 1",
+        "nein"
+      ],
+      [
+        "anzahl = anzahl + 1",
+        "Eingabe: alter",
+        "ja"
+      ]
+    ],
+    "initialPositions": [
+      {
+        "text": "Start",
+        "x": 576,
+        "y": 0
+      },
+      {
+        "text": "Ende",
+        "x": 576,
+        "y": 672
+      },
+      {
+        "text": "anzahl = 0",
+        "x": 576,
+        "y": 192
+      },
+      {
+        "text": "Eingabe: alter",
+        "x": 576,
+        "y": 288
+      },
+      {
+        "text": "alter >= 0",
+        "x": 576,
+        "y": 416
+      },
+      {
+        "text": "summe = summe + alter",
+        "x": 832,
+        "y": 512
+      },
+      {
+        "text": "durchschnitt = summe / anzahl",
+        "x": 384,
+        "y": 448
+      },
+      {
+        "text": "durchschnitt = alter",
+        "x": 128,
+        "y": 160
+      },
+      {
+        "text": "alter > 100",
+        "x": 128,
+        "y": 256
+      },
+      {
+        "text": "alter = alter + 1",
+        "x": 224,
+        "y": 160
+      },
+      {
+        "text": "Ausgabe: summe",
+        "x": 224,
+        "y": 256
+      },
+      {
+        "text": "Eingabe: maxAlter",
+        "x": 224,
+        "y": 352
+      },
+      {
+        "text": "anzahl > 0",
+        "x": 0,
+        "y": 320
+      },
+      {
+        "text": "durchschnitt = 0",
+        "x": 128,
+        "y": 64
+      },
+      {
+        "text": "Ausgabe: durchschnitt",
+        "x": 384,
+        "y": 544
+      },
+      {
+        "text": "summe = 0",
+        "x": 576,
+        "y": 96
+      },
+      {
+        "text": "anzahl = anzahl + 1",
+        "x": 832,
+        "y": 320
+      }
+    ]
+  }
+}

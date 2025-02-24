@@ -1,0 +1,145 @@
+{
+  "tasks": [
+    {
+      "id": 1740340634791,
+      "title": "Trinkgeld",
+      "description": "Ein Restaurant möchte einen Trinkgeld-Rechner entwickeln. Das Programm soll den Rechnungsbetrag einlesen und basierend auf der Zufriedenheit des Gastes (1-5 Sterne) das empfohlene Trinkgeld berechnen:\n\n1 Stern: 5% Trinkgeld\n2 Sterne: 5% Trinkgeld\n3 Sterne: 10% Trinkgeld\n4 Sterne: 10% Trinkgeld\n5 Sterne: 10% Trinkgeld\n\nDas Programm soll am Ende den Gesamtbetrag ausgeben.",
+      "availableBlocks": {
+        "required": [
+          {
+            "type": "start-end",
+            "text": "Start",
+            "position": {
+              "x": 512,
+              "y": 128
+            }
+          },
+          {
+            "type": "input",
+            "text": "Eingabe: Betrag",
+            "position": {
+              "x": 512,
+              "y": 224
+            }
+          },
+          {
+            "type": "input",
+            "text": "Eingabe: Sterne",
+            "position": {
+              "x": 512,
+              "y": 320
+            }
+          },
+          {
+            "type": "decision",
+            "text": "Sterne >= 3?",
+            "position": {
+              "x": 512,
+              "y": 416
+            }
+          },
+          {
+            "type": "process",
+            "text": "Trinkgeld = Betrag * 0.10",
+            "position": {
+              "x": 672,
+              "y": 512
+            }
+          },
+          {
+            "type": "process",
+            "text": "Trinkgeld = Betrag * 0.05",
+            "position": {
+              "x": 384,
+              "y": 512
+            }
+          },
+          {
+            "type": "start-end",
+            "text": "Ende",
+            "position": {
+              "x": 512,
+              "y": 800
+            }
+          },
+          {
+            "type": "process",
+            "text": "Gesamtbetrag = Trinkgeld + Betrag",
+            "position": {
+              "x": 512,
+              "y": 608
+            }
+          },
+          {
+            "type": "output",
+            "text": "Ausgabe: Gesamtbetrag",
+            "position": {
+              "x": 512,
+              "y": 704
+            }
+          }
+        ]
+      },
+      "solution": {
+        "connections": [
+          ["Start", "Eingabe: Betrag"],
+          ["Eingabe: Betrag", "Eingabe: Sterne"],
+          ["Eingabe: Sterne", "Sterne >= 3?"],
+          ["Sterne >= 3?", "Trinkgeld = Betrag * 0.05", "nein"],
+          ["Sterne >= 3?", "Trinkgeld = Betrag * 0.10", "ja"],
+          ["Trinkgeld = Betrag * 0.05", "Gesamtbetrag = Trinkgeld + Betrag"],
+          ["Trinkgeld = Betrag * 0.10", "Gesamtbetrag = Trinkgeld + Betrag"],
+          ["Gesamtbetrag = Trinkgeld + Betrag", "Ausgabe: Gesamtbetrag"],
+          ["Ausgabe: Gesamtbetrag", "Ende"]
+        ],
+        "initialPositions": [
+          {
+            "text": "Start",
+            "x": 512,
+            "y": 128
+          },
+          {
+            "text": "Eingabe: Betrag",
+            "x": 512,
+            "y": 224
+          },
+          {
+            "text": "Eingabe: Sterne",
+            "x": 512,
+            "y": 320
+          },
+          {
+            "text": "Sterne >= 3?",
+            "x": 512,
+            "y": 416
+          },
+          {
+            "text": "Trinkgeld = Betrag * 0.10",
+            "x": 672,
+            "y": 512
+          },
+          {
+            "text": "Trinkgeld = Betrag * 0.05",
+            "x": 384,
+            "y": 512
+          },
+          {
+            "text": "Ende",
+            "x": 512,
+            "y": 800
+          },
+          {
+            "text": "Gesamtbetrag = Trinkgeld + Betrag",
+            "x": 512,
+            "y": 608
+          },
+          {
+            "text": "Ausgabe: Gesamtbetrag",
+            "x": 512,
+            "y": 704
+          }
+        ]
+      }
+    }
+  ]
+}

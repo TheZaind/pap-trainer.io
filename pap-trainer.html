@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAP (Programmablaufplan) Trainer</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leader-line-new@1.1.9/leader-line.min.js"></script>
+    <style>
+        /* Fix for input/output blocks */
+        .input-output {
+            transform: none !important;
+        }
+
+        .input-output span {
+            transform: skew(-20deg);
+            display: block;
+        }
+
+        /* Fix for decision blocks */
+        .decision {
+            transform: none !important;
+            clip-path: none !important;
+            background: var(--decision-color);
+            position: relative;
+        }
+
+        .decision::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            z-index: 0;
+        }
+
+        .decision span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Ensure dragged elements appear above others */
+        .pap-shape.dragging {
+            z-index: 1000 !important;
+        }
+
+        /* Fix width for decision blocks in sidebar */
+        .sidebar .decision {
+            width: 64px !important;
+            height: 64px !important;
+        }
+
+        /* Additional CSS for solution display */
+        .pap-shape.solution {
+            animation: pulse 1s infinite;
+            opacity: 0.9;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.9; }
+            50% { opacity: 1; }
+            100% { opacity: 0.9; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bar">
+        <div class="title-nav">
+<button onclick="returnToLevelSelection()" class="nav-btn">🏠 Level Auswahl</button>
+<h1>PAP Trainer</h1>
+<button onclick="toggleHelp()" class="nav-btn">❓ Hilfe</button>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="xp-progress"></div>
+            </div>
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-icon">⭐</span>
+                    <span>Level: <span id="level">1</span></span>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">✨</span>
+                    <span>XP: <span id="xp">0</span>/<span id="xp-needed">100</span></span>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">🎯</span>
+                    <span>Gelöst: <span id="solved">0</span></span>
+                </div>
+            </div>
+        </div>
+        <div class="lives">
+            <span id="life1">❤️</span>
+            <span id="life2">❤️</span>
+            <span id="life3">❤️</span>
+        </div>
+    </div>
+<div class="level-selection" id="level-selection">
+    <button id="unlock-all" class="unlock-all-btn">🔓 Alle Level freischalten</button>
+    <div class="level-grid">
+        <!-- Levels will be dynamically added here -->
+    </div>
+</div>
+
+<div class="main-container" style="display: none;">
+        <div class="task-panel">
+            <div class="task-info">
+                <h3>Aktuelle Aufgabe</h3>
+                <p id="task-text" class="task-description"></p>
+                <div class="task-controls">
+                    <div class="history-btns">
+                        <button class="history-btn" id="undo-btn" title="Rückgängig (Ctrl+Z)">↩️</button>
+                        <button class="history-btn" id="redo-btn" title="Wiederholen (Ctrl+Y)">↪️</button>
+                    </div>
+                    <div class="task-nav">
+                        <button onclick="toggleSolution()" class="solution-btn" title="Lösung anzeigen">💡</button>
+                        <button onclick="checkSolution()" class="check-btn" title="Überprüfen">✅</button>
+                        <button onclick="clearDrawingArea(); saveState()" class="clear-btn" title="Löschen">🗑️</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar">
+            <div class="shape-container">
+                <div class="shape-title">🔄 Ablaufsteuerung</div>
+                <div class="pap-shape start-end" draggable="true" data-shape="start-end" data-tooltip="Startpunkt des Programms">
+                    <span>Start</span>
+                </div>
+                <div class="pap-shape start-end" draggable="true" data-shape="start-end" data-tooltip="Endpunkt des Programms">
+                    <span>Ende</span>
+                </div>
+            </div>
+
+            <div class="shape-container">
+                <div class="shape-title">📥 Ein-/Ausgabe</div>
+                <div class="pap-shape input-output" draggable="true" data-shape="input" data-tooltip="Einlesen einer Zahl">
+                    <span>Eingabe: Alter</span>
+                </div>
+                <div class="pap-shape input-output" draggable="true" data-shape="output" data-tooltip="Ausgabe des Ergebnisses">
+                    <span>Ausgabe: Durchschnitt</span>
+                </div>
+            </div>
+
+            <div class="shape-container">
+                <div class="shape-title">🔢 Verarbeitung</div>
+                <div class="pap-shape process" draggable="true" data-shape="process" data-tooltip="Variable initialisieren">
+                    <span>summe = 0</span>
+                </div>
+                <div class="pap-shape process" draggable="true" data-shape="process" data-tooltip="Zähler initialisieren">
+                    <span>anzahl = 0</span>
+                </div>
+                <div class="pap-shape process" draggable="true" data-shape="process" data-tooltip="Durchschnitt berechnen">
+                    <span>durchschnitt = summe / anzahl</span>
+                </div>
+                <div class="pap-shape process" draggable="true" data-shape="process" data-tooltip="Summe aktualisieren">
+                    <span>summe = summe + alter</span>
+                </div>
+                <div class="pap-shape process" draggable="true" data-shape="process" data-tooltip="Zähler erhöhen">
+                    <span>anzahl = anzahl + 1</span>
+                </div>
+            </div>
+
+            <div class="shape-container">
+                <div class="shape-title">❓ Entscheidung</div>
+                <div class="pap-shape decision" draggable="true" data-shape="decision" data-tooltip="Prüfe ob Alter positiv">
+                    <span>alter >= 0</span>
+                </div>
+                <div class="pap-shape decision" draggable="true" data-shape="decision" data-tooltip="Prüfe Gültigkeit">
+                    <span>alter <= 100</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="drawing-area" id="drawing-area">
+            <!-- PAP blocks will be placed here -->
+        </div>
+    </div>
+
+    <div class="mini-map" id="mini-map">
+        <div class="mini-map-content" id="mini-map-content">
+            <div class="viewport-indicator"></div>
+        </div>
+    </div>
+
+    <div class="help-panel" id="help-panel">
+        <button class="close-help" onclick="toggleHelp()">×</button>
+        <h2>PAP-Elemente erklärt</h2>
+        
+        <div class="shape-example">
+            <div class="shape-preview">
+                <div class="pap-shape start-end">
+                    <span>Start/Ende</span>
+                </div>
+            </div>
+            <div class="shape-description">
+                <strong>Start/Ende:</strong> Markiert den Beginn und das Ende des Programmablaufs. 
+                Jeder PAP muss genau einen Start- und einen Endpunkt haben.
+            </div>
+        </div>
+
+        <div class="shape-example">
+            <div class="shape-preview">
+                <div class="pap-shape process">
+                    <span>summe = 0</span>
+                </div>
+            </div>
+            <div class="shape-description">
+                <strong>Verarbeitung:</strong> Führt eine Operation aus, z.B. Berechnungen oder 
+                Zuweisungen von Werten zu Variablen.
+            </div>
+        </div>
+
+        <div class="shape-example">
+            <div class="shape-preview">
+                <div class="pap-shape input-output">
+                    <span>Eingabe: Zahl</span>
+                </div>
+            </div>
+            <div class="shape-description">
+                <strong>Ein-/Ausgabe:</strong> Liest Daten vom Benutzer ein oder gibt 
+                Ergebnisse aus. Wird als Parallelogramm dargestellt.
+            </div>
+        </div>
+
+        <div class="shape-example">
+            <div class="shape-preview">
+                <div class="pap-shape decision">
+                    <span>x > 0</span>
+                </div>
+            </div>
+            <div class="shape-description">
+                <strong>Entscheidung:</strong> Prüft eine Bedingung. Hat zwei Ausgänge:
+                "ja" (nach rechts) und "nein" (nach unten).
+            </div>
+        </div>
+
+        <h3>Tipps:</h3>
+        <ul>
+            <li>Verbinde Blöcke durch Klicken auf die Verbindungspunkte</li>
+            <li>Nutze die Pfeiltasten zum genauen Positionieren</li>
+            <li>Drücke Entf zum Löschen ausgewählter Blöcke</li>
+            <li>Mit Strg+Z/Y kannst du Aktionen rückgängig machen</li>
+        </ul>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

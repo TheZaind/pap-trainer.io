@@ -1,0 +1,331 @@
+{
+    "id": 1740584631458,
+    "title": "Zahlenfolge prüfen",
+    "description": "Entwickle einen PAP, der eine Zahlenfolge auf spezielle Eigenschaften prüft. Der Benutzer gibt nacheinander Zahlen ein, bis eine 0 eingegeben wird. Das Programm soll zählen, wie viele gerade und wie viele ungerade Zahlen eingegeben wurden und das Ergebnis ausgeben.",
+    "availableBlocks": {
+      "required": [
+        {
+          "type": "start-end",
+          "text": "Start",
+          "position": {
+            "x": 512,
+            "y": 96
+          }
+        },
+        {
+          "type": "start-end",
+          "text": "Ende",
+          "position": {
+            "x": 512,
+            "y": 768
+          }
+        },
+        {
+          "type": "process",
+          "text": "geradeZahlen = 0",
+          "position": {
+            "x": 512,
+            "y": 192
+          }
+        },
+        {
+          "type": "process",
+          "text": "ungeradeZahlen = 0",
+          "position": {
+            "x": 512,
+            "y": 288
+          }
+        },
+        {
+          "type": "input",
+          "text": "Eingabe: zahl",
+          "position": {
+            "x": 512,
+            "y": 384
+          }
+        },
+        {
+          "type": "decision",
+          "text": "zahl == 0",
+          "position": {
+            "x": 512,
+            "y": 480
+          }
+        },
+        {
+          "type": "decision",
+          "text": "zahl % 2 == 0",
+          "position": {
+            "x": 352,
+            "y": 576
+          }
+        },
+        {
+          "type": "process",
+          "text": "geradeZahlen = geradeZahlen + 1",
+          "position": {
+            "x": 192,
+            "y": 672
+          }
+        },
+        {
+          "type": "process",
+          "text": "ungeradeZahlen = ungeradeZahlen + 1",
+          "position": {
+            "x": 512,
+            "y": 672
+          }
+        },
+        {
+          "type": "output",
+          "text": "Ausgabe: geradeZahlen",
+          "position": {
+            "x": 672,
+            "y": 576
+          }
+        },
+        {
+          "type": "output",
+          "text": "Ausgabe: ungeradeZahlen",
+          "position": {
+            "x": 672,
+            "y": 672
+          }
+        }
+      ],
+      "optional": [
+        {
+          "type": "process",
+          "text": "summe = 0",
+          "position": {
+            "x": 128,
+            "y": 192
+          }
+        },
+        {
+          "type": "input",
+          "text": "Eingabe: anzahl",
+          "position": {
+            "x": 128,
+            "y": 288
+          }
+        },
+        {
+          "type": "decision",
+          "text": "zahl > 0",
+          "position": {
+            "x": 128,
+            "y": 384
+          }
+        },
+        {
+          "type": "process",
+          "text": "zahl = zahl * 2",
+          "position": {
+            "x": 128,
+            "y": 480
+          }
+        },
+        {
+          "type": "output",
+          "text": "Ausgabe: summe",
+          "position": {
+            "x": 128,
+            "y": 576
+          }
+        },
+        {
+          "type": "process",
+          "text": "durchschnitt = summe / (geradeZahlen + ungeradeZahlen)",
+          "position": {
+            "x": 256,
+            "y": 480
+          }
+        },
+        {
+          "type": "output",
+          "text": "Ausgabe: durchschnitt",
+          "position": {
+            "x": 256,
+            "y": 576
+          }
+        }
+      ]
+    },
+    "solution": {
+      "connections": [
+        [
+          "Start",
+          "geradeZahlen = 0",
+          "ja"
+        ],
+        [
+          "geradeZahlen = 0",
+          "ungeradeZahlen = 0",
+          "ja"
+        ],
+        [
+          "ungeradeZahlen = 0",
+          "Eingabe: zahl",
+          "ja"
+        ],
+        [
+          "Eingabe: zahl",
+          "zahl == 0",
+          "ja"
+        ],
+        [
+          "zahl == 0",
+          "Ausgabe: geradeZahlen",
+          "ja"
+        ],
+        [
+          "Ausgabe: geradeZahlen",
+          "Ausgabe: ungeradeZahlen",
+          "ja"
+        ],
+        [
+          "Ausgabe: ungeradeZahlen",
+          "Ende",
+          "ja"
+        ],
+        [
+          "zahl == 0",
+          "zahl % 2 == 0",
+          "nein"
+        ],
+        [
+          "zahl % 2 == 0",
+          "geradeZahlen = geradeZahlen + 1",
+          "ja"
+        ],
+        [
+          "zahl % 2 == 0",
+          "ungeradeZahlen = ungeradeZahlen + 1",
+          "nein"
+        ],
+        [
+          "geradeZahlen = geradeZahlen + 1",
+          "Eingabe: zahl",
+          "ja"
+        ],
+        [
+          "ungeradeZahlen = ungeradeZahlen + 1",
+          "Eingabe: zahl",
+          "ja"
+        ]
+      ],
+      "initialPositions": [
+        {
+          "text": "Start",
+          "x": 512,
+          "y": 96
+        },
+        {
+          "text": "Ende",
+          "x": 512,
+          "y": 768
+        },
+        {
+          "text": "geradeZahlen = 0",
+          "x": 512,
+          "y": 192
+        },
+        {
+          "text": "ungeradeZahlen = 0",
+          "x": 512,
+          "y": 288
+        },
+        {
+          "text": "Eingabe: zahl",
+          "x": 512,
+          "y": 384
+        },
+        {
+          "text": "zahl == 0",
+          "x": 512,
+          "y": 480
+        },
+        {
+          "text": "zahl % 2 == 0",
+          "x": 352,
+          "y": 576
+        },
+        {
+          "text": "geradeZahlen = geradeZahlen + 1",
+          "x": 192,
+          "y": 672
+        },
+        {
+          "text": "ungeradeZahlen = ungeradeZahlen + 1",
+          "x": 512,
+          "y": 672
+        },
+        {
+          "text": "Ausgabe: geradeZahlen",
+          "x": 672,
+          "y": 576
+        },
+        {
+          "text": "Ausgabe: ungeradeZahlen",
+          "x": 672,
+          "y": 672
+        },
+        {
+          "text": "summe = 0",
+          "x": 128,
+          "y": 192
+        },
+        {
+          "text": "Eingabe: anzahl",
+          "x": 128,
+          "y": 288
+        },
+        {
+          "text": "zahl > 0",
+          "x": 128,
+          "y": 384
+        },
+        {
+          "text": "zahl = zahl * 2",
+          "x": 128,
+          "y": 480
+        },
+        {
+          "text": "Ausgabe: summe",
+          "x": 128,
+          "y": 576
+        },
+        {
+          "text": "durchschnitt = summe / (geradeZahlen + ungeradeZahlen)",
+          "x": 256,
+          "y": 480
+        },
+        {
+          "text": "Ausgabe: durchschnitt",
+          "x": 256,
+          "y": 576
+        }
+      ]
+    },
+    "flowValidation": [
+      "Start",
+      ["geradeZahlen = 0", "ungeradeZahlen = 0"],
+      {
+        "loop": {
+          "start": "Eingabe: zahl",
+          "decision": "zahl == 0",
+          "onTrue": "break",
+          "onFalse": {
+            "branch": {
+              "condition": "zahl % 2 == 0",
+              "onTrue": "geradeZahlen = geradeZahlen + 1",
+              "onFalse": "ungeradeZahlen = ungeradeZahlen + 1"
+            }
+          }
+        }
+      },
+      ["Ausgabe: geradeZahlen", "Ausgabe: ungeradeZahlen"],
+      "Ende"
+    ]
+  }
