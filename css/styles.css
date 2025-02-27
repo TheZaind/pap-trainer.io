@@ -8,7 +8,7 @@
     --secondary-color: #6c757d;
     --success-color: #28a745;
     --error-color: #dc3545;
-    --decision-color: #ffd700;
+    --decision-color: #FFA500;
     --process-color: #b8daff;
     --io-color: #d4edda;
     --start-end-color: #f8d7da;
@@ -22,7 +22,7 @@
     --border-color: #444;
     --hover-color: #3d3d3d;
     --primary-color: #4d9eff;
-    --decision-color: #8b7300;
+    --decision-color: #ff8c00;
     --process-color: #1a4b81;
     --io-color: #155724;
     --start-end-color: #721c24;
@@ -183,6 +183,28 @@ body {
 
 .leader-line:hover {
     opacity: 0.7 !important;
+}
+
+.line-control-point {
+    width: 12px;
+    height: 12px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: move;
+    z-index: 1000;
+    border: 2px solid var(--container-bg);
+    transition: transform 0.2s ease;
+}
+
+.line-control-point:hover {
+    transform: translate(-50%, -50%) scale(1.2);
+}
+
+.line-control-point.selected {
+    background: var(--success-color);
+    box-shadow: 0 0 5px var(--success-color);
 }
 
 .sidebar {
@@ -402,7 +424,6 @@ body {
 
 /* Tool buttons */
 .task-nav button:nth-child(3),
-
 .task-nav button:nth-child(4),
 .task-nav button:nth-child(5) {
     grid-column: span 1;
@@ -553,17 +574,108 @@ body {
     transform: skew(20deg);
 }
 
+/* Decision block styling */
 .decision {
     width: 64px;
     height: 64px;
     margin: 4px auto;
-    background: var(--decision-color);
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 8px;
     font-size: 10px;
+    background: transparent;
+    border: none;
+    cursor: grab;
+    transition: transform 0.2s ease;
+}
+
+/* Diamond shape */
+.decision::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: var(--decision-color);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    transition: transform 0.2s ease;
+    z-index: 0;
+}
+
+/* Border */
+.decision::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--border-color);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    transition: all 0.2s ease;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Hover effects */
+.decision:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Selected state */
+.decision.selected::after {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+/* Dragging state */
+.decision.dragging {
+    transform: none;
+    box-shadow: none;
+}
+
+.decision.dragging::before,
+.decision.dragging::after {
+    opacity: 0.5;
+}
+
+/* Connection points precisely aligned with diamond points */
+.decision .connection-point.top {
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.decision .connection-point.right {
+    right: 0;
+    top: 50%;
+    transform: translate(50%, -50%);
+}
+
+.decision .connection-point.bottom {
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 50%);
+}
+
+.decision .connection-point.left {
+    left: 0;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Text content */
+.decision span {
+    position: relative;
+    z-index: 1;
+    pointer-events: none;
+    display: inline-block;
+    max-width: 80%;
+    text-align: center;
+    transform: none;
+}
+
+/* Dragging state */
+.decision.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
 }
 
 .help-panel {
