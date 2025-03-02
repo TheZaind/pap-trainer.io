@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAP Task Creator</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/leader-line-new@1.1.9/leader-line.min.js"></script>
+    <style>
+        .task-editor {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100vh;
+            background: var(--container-bg);
+            border-left: 1px solid var(--border-color);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .task-editor textarea {
+            width: 100%;
+            height: 150px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .task-editor button {
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .task-editor button:hover {
+            opacity: 0.9;
+        }
+
+        .hints-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .hint-item {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .hint-item textarea {
+            flex-grow: 1;
+            height: 60px;
+        }
+
+        .hint-item button {
+            padding: 0.25rem;
+            min-width: 30px;
+            height: 30px;
+            font-size: 1rem;
+        }
+
+        .add-hint-btn {
+            margin-top: 0.5rem;
+            background: var(--secondary-color);
+            align-self: flex-start;
+        }
+
+        .pap-shape span {
+            outline: none;
+        }
+
+        .pap-shape span[contenteditable="true"]:focus {
+            background: rgba(255,255,255,0.1);
+            padding: 2px;
+            border-radius: 2px;
+        }
+
+        .main-container {
+            grid-template-columns: 160px 1fr !important;
+            padding-right: 300px;
+        }
+
+        /* Fix for input/output blocks */
+        /* Fix for input/output blocks */
+        .input-output {
+            transform: none !important;
+        }
+
+        .input-output span {
+            transform: skew(-20deg);
+            display: block;
+        }
+
+        /* Fix for decision blocks */
+        .decision {
+            transform: none !important;
+            clip-path: none !important;
+            background: var(--decision-color);
+            position: relative;
+            width: 64px;
+            height: 64px;
+            margin: 8px auto;
+        }
+
+        .decision::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            z-index: 0;
+        }
+
+        .decision span {
+            position: relative;
+            z-index: 1;
+            transform: none !important;
+            max-width: 80px;
+            text-align: center;
+        }
+
+        /* Connection points styling */
+        .connection-point {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            position: absolute;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .connection-point:hover {
+            transform: scale(1.5);
+            background: var(--secondary-color);
+        }
+
+        .connection-point.active {
+            background: var(--highlight-color);
+            transform: scale(1.5);
+        }
+
+        .connection-point.potential-target {
+            opacity: 0.5;
+        }
+
+        .connection-point.highlight {
+            background: var(--highlight-color);
+            transform: scale(1.5);
+        }
+
+        /* Adjust connection points for decision blocks */
+        .decision .connection-point.top {
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .decision .connection-point.bottom {
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .decision .connection-point.left {
+            left: -4px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .decision .connection-point.right {
+            right: -4px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Ensure dragged elements appear above others */
+        .pap-shape.dragging {
+            z-index: 1000 !important;
+            opacity: 0.8;
+            transform: scale(1.05);
+            cursor: grabbing;
+        }
+
+        .pap-shape {
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            cursor: grab;
+        }
+
+        .pap-shape.selected {
+            outline: 2px solid var(--highlight-color);
+        }
+
+        /* Control points for lines */
+        .line-control-point {
+            width: 10px;
+            height: 10px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            position: absolute;
+            cursor: move;
+            z-index: 100;
+        }
+
+        .line-control-point:hover {
+            transform: scale(1.5);
+            background: var (--highlight-color);
+        }
+
+        .line-control-point.selected {
+            background: var(--highlight-color);
+            transform: scale(1.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="shape-container">
+                <div class="shape-title">🔄 Ablaufsteuerung</div>
+                <div class="pap-shape start-end" draggable="true" data-shape="start-end">
+                    <span contenteditable="true">Start</span>
+                </div>
+                <div class="pap-shape start-end" draggable="true" data-shape="start-end">
+                    <span contenteditable="true">Ende</span>
+                </div>
+            </div>
+
+            <div class="shape-container">
+                <div class="shape-title">📥 Ein-/Ausgabe</div>
+                <div class="pap-shape input-output" draggable="true" data-shape="input">
+                    <span contenteditable="true">Eingabe: Wert</span>
+                </div>
+                <div class="pap-shape input-output" draggable="true" data-shape="output">
+                    <span contenteditable="true">Ausgabe: Wert</span>
+                </div>
+            </div>
+
+            <div class="shape-container">
+                <div class="shape-title">🔢 Verarbeitung</div>
+                <div class="pap-shape process" draggable="true" data-shape="process">
+                    <span contenteditable="true">wert = 0</span>
+                </div>
+            </div>
+
+            <div class="shape-container">
+                <div class="shape-title">❓ Entscheidung</div>
+                <div class="pap-shape decision" draggable="true" data-shape="decision">
+                    <span contenteditable="true">wert > 0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="drawing-area" id="drawing-area">
+            <!-- PAP blocks will be placed here -->
+        </div>
+    </div>
+
+    <div class="task-editor">
+        <h2>Aufgabe erstellen</h2>
+        <div>
+            <label>Titel:</label>
+            <input type="text" id="task-title" style="width: 100%; margin-top: 0.5rem; padding: 0.5rem; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color);">
+        </div>
+        <div>
+            <label>Aufgabenbeschreibung:</label>
+            <textarea id="task-description" placeholder="Beschreibe hier die Aufgabe..."></textarea>
+        </div>
+        <div>
+            <label>Tipps:</label>
+            <div id="hints-container" class="hints-container">
+                <!-- Hint items will be added here dynamically -->
+            </div>
+            <button id="add-hint-btn" class="add-hint-btn">+ Tipp hinzufügen</button>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <button id="saveTaskBtn">Als JSON speichern</button>
+            <button id="loadTaskBtn" style="background: var(--secondary-color);">JSON laden</button>
+            <input type="file" id="fileInput" accept=".json" style="display: none;">
+        </div>
+        <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+            <p style="margin: 0; font-size: 0.9em; color: var(--secondary-color);">
+                Info: Blöcke ohne Verbindungen werden als optionale Blöcke gespeichert.
+            </p>
+        </div>
+    </div>
+
+    <script src="js/pap-functions.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let leaderLines = [];
+        let connecting = false;
+        let connectionStart = null;
+        let isDragging = false;
+        let selectedElement = null;
+        let startX = 0;
+        let startY = 0;
+        let mouseOverPoint = null;
+        let selectedControlPoint = null;
+        let isDraggingControlPoint = false;
+        let controlPoints = new Map();
+
+        // History management
+        let undoStack = [];
+        let redoStack = [];
+        const maxStackSize = 50;
+
+        const blockSize = 32;
+        const gridSize = blockSize;
+
+        // Initialize hints array
+        let hints = [];
+
+        // Add undo/redo buttons to task-editor
+        const controlsDiv = document.querySelector('.task-editor > div:nth-child(4)');
+        const undoButton = document.createElement('button');
+        undoButton.innerHTML = '↩️ Undo';
+        undoButton.style.background = 'var(--secondary-color)';
+        const redoButton = document.createElement('button');
+        redoButton.innerHTML = '↪️ Redo';
+        redoButton.style.background = 'var(--secondary-color)';
+        controlsDiv.prepend(redoButton);
+        controlsDiv.prepend(undoButton);
+
+        undoButton.addEventListener('click', undo);
+        redoButton.addEventListener('click', redo);
+
+        // Add hint management functions
+        document.getElementById('add-hint-btn').addEventListener('click', addHint);
+
+        function addHint(text = '') {
+            const hintsContainer = document.getElementById('hints-container');
+            const hintIndex = hintsContainer.children.length;
+            
+            const hintItem = document.createElement('div');
+            hintItem.className = 'hint-item';
+            
+            const textarea = document.createElement('textarea');
+            textarea.placeholder = `Tipp ${hintIndex + 1}`;
+            textarea.value = text;
+            textarea.addEventListener('input', saveToHistory);
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.innerHTML = '✕';
+            removeBtn.title = 'Tipp entfernen';
+            removeBtn.addEventListener('click', () => {
+                hintItem.remove();
+                updateHintNumbers();
+                saveToHistory();
+            });
+            
+            hintItem.appendChild(textarea);
+            hintItem.appendChild(removeBtn);
+            hintsContainer.appendChild(hintItem);
+            
+            return hintItem;
+        }
+        
+        function updateHintNumbers() {
+            const hints = document.querySelectorAll('.hint-item textarea');
+            hints.forEach((hint, index) => {
+                hint.placeholder = `Tipp ${index + 1}`;
+            });
+        }
+        
+        function collectHints() {
+            return Array.from(document.querySelectorAll('.hint-item textarea')).map(ta => ta.value.trim()).filter(text => text !== '');
+        }
+
+        // Add event listeners for save and load buttons
+        document.getElementById('saveTaskBtn').addEventListener('click', saveTask);
+        document.getElementById('loadTaskBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+        document.getElementById('fileInput').addEventListener('change', function() { loadTask(this); });
+
+        // Define createBlock function to fix "createBlock is not defined" error
+        function createBlock(blockData) {
+            const shape = document.createElement('div');
+            shape.className = 'pap-shape';
+            shape.setAttribute('data-shape', blockData.type);
+            shape.classList.add(blockData.type);
+            
+            const span = document.createElement('span');
+            span.contentEditable = 'true';
+            span.textContent = blockData.text;
+            span.addEventListener('input', saveToHistory);
+            span.addEventListener('blur', saveToHistory);
+            shape.appendChild(span);
+            
+            shape.style.position = 'absolute';
+            shape.style.left = `${blockData.position.x}px`;
+            shape.style.top = `${blockData.position.y}px`;
+            
+            document.getElementById('drawing-area').appendChild(shape);
+            createConnectionPoints(shape);
+            shape.addEventListener('mousedown', startDragging);
+            
+            return shape;
+        }
+
+        function createConnectionPoints(element) {
+            ['top', 'right', 'bottom', 'left'].forEach(position => {
+                const point = document.createElement('div');
+                point.className = `connection-point ${position} visible`;
+                point.dataset.position = position;
+                element.appendChild(point);
+
+                point.addEventListener('mousedown', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    isDragging = false;
+                    
+                    connecting = true;
+                    connectionStart = {
+                        element: element,
+                        point: position,
+                        anchor: point
+                    };
+                    point.classList.add('active');
+
+                    document.querySelectorAll('.pap-shape').forEach(shape => {
+                        if (shape !== element) {
+                            shape.querySelectorAll('.connection-point').forEach(p => {
+                                p.classList.add('potential-target');
+                            });
+                        }
+                    });
+                });
+
+                point.addEventListener('mouseenter', () => {
+                    mouseOverPoint = {
+                        element: element,
+                        point: position,
+                        anchor: point
+                    };
+
+                    if (connecting && element !== connectionStart?.element) {
+                        point.classList.add('highlight');
+                    }
+                });
+
+                point.addEventListener('mouseleave', () => {
+                    if (mouseOverPoint?.anchor === point) {
+                        mouseOverPoint = null;
+                    }
+                    point.classList.remove('highlight');
+                });
+
+                point.addEventListener('mouseup', (e) => {
+                    if (connecting && connectionStart && element !== connectionStart.element) {
+                        e.stopPropagation();
+                        e.preventDefault();
+
+                        try {
+                            // Create and add control point first
+                            const controlPoint = document.createElement('div');
+                            controlPoint.className = 'line-control-point';
+                            controlPoint.wasManuallyMoved = false; // Track if user has moved this point
+                            document.querySelector('.drawing-area').appendChild(controlPoint);
+                            
+                            // Position control point at the midpoint
+                            const startPos = connectionStart.anchor.getBoundingClientRect();
+                            const endPos = point.getBoundingClientRect();
+                            const drawingRect = document.querySelector('.drawing-area').getBoundingClientRect();
+                            const midX = (startPos.x + endPos.x) / 2 - drawingRect.left;
+                            const midY = (startPos.y + endPos.y) / 2 - drawingRect.top;
+                            
+                            controlPoint.style.left = `${midX}px`;
+                            controlPoint.style.top = `${midY}px`;
+                            
+                            // NEUE METHODE: Erstelle zwei Linien statt einer
+                            // 1. Linie vom Startpunkt zum Kontrollpunkt
+                            const startLine = new LeaderLine(
+                                connectionStart.anchor,
+                                LeaderLine.pointAnchor(controlPoint),
+                                {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
+                                    size: 2,
+                                    path: 'straight',
+                                    startSocket: connectionStart.point,
+                                    endSocket: 'bottom',
+                                    endPlug: 'behind',
+                                    startSocketGravity: 0,
+                                    endSocketGravity: 0
+                                }
+                            );
+                            
+                            // 2. Linie vom Kontrollpunkt zum Endpunkt
+                            const endLine = new LeaderLine(
+                                LeaderLine.pointAnchor(controlPoint),
+                                point,
+                                {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
+                                    size: 2,
+                                    path: 'straight',
+                                    startSocket: 'top',
+                                    endSocket: position,
+                                    endPlug: 'arrow3',
+                                    startSocketGravity: 0,
+                                    endSocketGravity: 0
+                                }
+                            );
+                            
+                            // Speichere Referenzen auf beide Linien im Kontrollpunkt
+                            controlPoint.startLine = startLine;
+                            controlPoint.endLine = endLine;
+                            
+                            // Referenzen in den Linien auf den Kontrollpunkt speichern
+                            startLine.controlPoint = controlPoint;
+                            endLine.controlPoint = controlPoint;
+                            
+                            // Add the two lines to the leaderLines array
+                            leaderLines.push(startLine);
+                            leaderLines.push(endLine);
+                            
+                            // Add control point drag behavior
+                            controlPoint.addEventListener('mousedown', (e) => {
+                                if (e.button !== 0) return;
+                                e.stopPropagation();
+                                isDraggingControlPoint = true;
+                                selectedControlPoint = controlPoint;
+                                controlPoint.classList.add('selected');
+                                
+                                const rect = controlPoint.getBoundingClientRect();
+                                startX = e.clientX - rect.left;
+                                startY = e.clientY - rect.top;
+                                controlPoint.wasManuallyMoved = true;
+                            });
+                            
+                            // Add click event for deletion via UI
+                            const deleteConnection = () => {
+                                const startIndex = leaderLines.indexOf(startLine);
+                                const endIndex = leaderLines.indexOf(endLine);
+                                
+                                if (startIndex > -1) {
+                                    leaderLines.splice(startIndex, 1);
+                                    startLine.remove();
+                                }
+                                
+                                if (endIndex > -1) {
+                                    leaderLines.splice(endIndex > startIndex ? endIndex - 1 : endIndex, 1);
+                                    endLine.remove();
+                                }
+                                
+                                controlPoint.remove();
+                                saveToHistory();
+                            };
+                            
+                            // Make both lines clickable for deletion
+                            if (startLine.element) {
+                                startLine.element.style.cursor = 'pointer';
+                                startLine.element.title = 'Klicken zum Löschen der Verbindung';
+                                startLine.element.addEventListener('click', deleteConnection);
+                            }
+                            
+                            if (endLine.element) {
+                                endLine.element.style.cursor = 'pointer';
+                                endLine.element.title = 'Klicken zum Löschen der Verbindung';
+                                endLine.element.addEventListener('click', deleteConnection);
+                            }
+                            
+                            saveToHistory();
+                        } catch (error) {
+                            console.error('Error creating connection:', error);
+                        }
+                    }
+
+                    const activePoint = document.querySelector('.connection-point.active');
+                    if (activePoint) activePoint.classList.remove('active');
+                    document.querySelectorAll('.connection-point').forEach(p => {
+                        p.classList.remove('potential-target');
+                        p.classList.remove('highlight');
+                    });
+                    connecting = false;
+                    connectionStart = null;
+                });
+            });
+        }
+
+        // History management functions
+        function saveToHistory() {
+            const state = {
+                blocks: Array.from(document.querySelectorAll('.drawing-area .pap-shape')).map(block => ({
+                    type: block.getAttribute('data-shape'),
+                    text: block.querySelector('span').textContent,
+                    position: {
+                        x: parseInt(block.style.left) || 0,
+                        y: parseInt(block.style.top) || 0
+                    }
+                })),
+                lines: leaderLines.filter(line => {
+                    // Only save lines with valid start and end points
+                    return line.start && line.end && 
+                           line.start.element && line.end.element &&
+                           typeof line.start.element.closest === 'function' && 
+                           typeof line.end.element.closest === 'function';
+                }).map(line => {
+                    try {
+                        const startShape = line.start.element.closest('.pap-shape');
+                        const endShape = line.end.element.closest('.pap-shape');
+                        
+                        if (!startShape || !endShape) return null;
+                        
+                        return {
+                            start: {
+                                block: startShape.querySelector('span').textContent,
+                                point: line.start.dataset.position
+                            },
+                            end: {
+                                block: endShape.querySelector('span').textContent,
+                                point: line.end.dataset.position
+                            }
+                        };
+                    } catch (error) {
+                        console.warn('Ungültige Linie ignoriert:', error);
+                        return null;
+                    }
+                }).filter(Boolean) // Remove null entries
+            };
+            
+            undoStack.push(JSON.stringify(state));
+            if (undoStack.length > maxStackSize) {
+                undoStack.shift();
+            }
+            redoStack = [];
+            updateUndoRedoButtons();
+        }
+
+        function updateUndoRedoButtons() {
+            undoButton.disabled = undoStack.length === 0;
+            redoButton.disabled = redoStack.length === 0;
+            undoButton.style.opacity = undoStack.length === 0 ? '0.5' : '1';
+            redoButton.style.opacity = redoStack.length === 0 ? '0.5' : '1';
+        }
+
+        function undo() {
+            if (undoStack.length === 0) return;
+            
+            const currentState = {
+                blocks: Array.from(document.querySelectorAll('.drawing-area .pap-shape')).map(block => ({
+                    type: block.getAttribute('data-shape'),
+                    text: block.querySelector('span').textContent,
+                    position: {
+                        x: parseInt(block.style.left) || 0,
+                        y: parseInt(block.style.top) || 0
+                    }
+                })),
+                lines: leaderLines.filter(line => {
+                    // Only include lines with valid start and end elements
+                    return line.start && line.end && 
+                           line.start.element && line.end.element &&
+                           typeof line.start.element.closest === 'function' && 
+                           typeof line.end.element.closest === 'function';
+                }).map(line => {
+                    try {
+                        const startShape = line.start.element.closest('.pap-shape');
+                        const endShape = line.end.element.closest('.pap-shape');
+                        
+                        if (!startShape || !endShape) return null;
+                        
+                        return {
+                            start: {
+                                block: startShape.querySelector('span').textContent,
+                                point: line.start.dataset.position
+                            },
+                            end: {
+                                block: endShape.querySelector('span').textContent,
+                                point: line.end.dataset.position
+                            }
+                        };
+                    } catch (error) {
+                        console.warn('Fehler bei Linie:', error);
+                        return null;
+                    }
+                }).filter(Boolean)
+            };
+            redoStack.push(JSON.stringify(currentState));
+            
+            const previousState = JSON.parse(undoStack.pop());
+            restoreState(previousState);
+            updateUndoRedoButtons();
+        }
+
+        function redo() {
+            if (redoStack.length === 0) return;
+            
+            const currentState = {
+                blocks: Array.from(document.querySelectorAll('.drawing-area .pap-shape')).map(block => ({
+                    type: block.getAttribute('data-shape'),
+                    text: block.querySelector('span').textContent,
+                    position: {
+                        x: parseInt(block.style.left) || 0,
+                        y: parseInt(block.style.top) || 0
+                    }
+                })),
+                lines: leaderLines.filter(line => {
+                    // Only include lines with valid start and end elements
+                    return line.start && line.end && 
+                           line.start.element && line.end.element &&
+                           typeof line.start.element.closest === 'function' && 
+                           typeof line.end.element.closest === 'function';
+                }).map(line => {
+                    try {
+                        const startShape = line.start.element.closest('.pap-shape');
+                        const endShape = line.end.element.closest('.pap-shape');
+                        
+                        if (!startShape || !endShape) return null;
+                        
+                        return {
+                            start: {
+                                block: startShape.querySelector('span').textContent,
+                                point: line.start.dataset.position
+                            },
+                            end: {
+                                block: endShape.querySelector('span').textContent,
+                                point: line.end.dataset.position
+                            }
+                        };
+                    } catch (error) {
+                        console.warn('Fehler bei Linie:', error);
+                        return null;
+                    }
+                }).filter(Boolean)
+            };
+            undoStack.push(JSON.stringify(currentState));
+            
+            const nextState = JSON.parse(redoStack.pop());
+            restoreState(nextState);
+            updateUndoRedoButtons();
+        }
+
+        function restoreState(state) {
+            clearDrawingArea();
+            
+            // Recreate blocks
+            state.blocks.forEach(blockData => {
+                createBlock(blockData);
+            });
+            
+            // Recreate connections
+            state.lines.forEach(lineData => {
+                try {
+                    const startBlock = Array.from(document.querySelectorAll('.drawing-area .pap-shape')).find(
+                        block => block.querySelector('span').textContent === lineData.start.block
+                    );
+                    const endBlock = Array.from(document.querySelectorAll('.drawing-area .pap-shape')).find(
+                        block => block.querySelector('span').textContent === lineData.end.block
+                    );
+                    
+                    if (startBlock && endBlock) {
+                        const startPoint = startBlock.querySelector(`.connection-point.${lineData.start.point}`);
+                        const endPoint = endBlock.querySelector(`.connection-point.${lineData.end.point}`);
+                        
+                        if (startPoint && endPoint) {
+                            // Create control point first
+                            const controlPoint = document.createElement('div');
+                            controlPoint.className = 'line-control-point';
+                            controlPoint.wasManuallyMoved = false;
+                            document.querySelector('.drawing-area').appendChild(controlPoint);
+                            
+                            // Position control point at the midpoint
+                            const startPos = startPoint.getBoundingClientRect();
+                            const endPos = endPoint.getBoundingClientRect();
+                            const drawingRect = document.querySelector('.drawing-area').getBoundingClientRect();
+                            const midX = (startPos.x + endPos.x) / 2 - drawingRect.left;
+                            const midY = (startPos.y + endPos.y) / 2 - drawingRect.top;
+                            
+                            controlPoint.style.left = `${midX}px`;
+                            controlPoint.style.top = `${midY}px`;
+                            
+                            // Create two lines for connection
+                            const startLine = new LeaderLine(
+                                startPoint,
+                                LeaderLine.pointAnchor(controlPoint),
+                                {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
+                                    size: 2,
+                                    path: 'straight',
+                                    startSocket: lineData.start.point,
+                                    endSocket: 'bottom',
+                                    endPlug: 'behind',
+                                    startSocketGravity: 0,
+                                    endSocketGravity: 0
+                                }
+                            );
+                            
+                            const endLine = new LeaderLine(
+                                LeaderLine.pointAnchor(controlPoint),
+                                endPoint,
+                                {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
+                                    size: 2,
+                                    path: 'straight',
+                                    startSocket: 'top',
+                                    endSocket: lineData.end.point,
+                                    endPlug: 'arrow3',
+                                    startSocketGravity: 0,
+                                    endSocketGravity: 0
+                                }
+                            );
+                            
+                            // Store references to both lines in control point
+                            controlPoint.startLine = startLine;
+                            controlPoint.endLine = endLine;
+                            
+                            // Store reference to control point in lines
+                            startLine.controlPoint = controlPoint;
+                            endLine.controlPoint = controlPoint;
+                            
+                            leaderLines.push(startLine);
+                            leaderLines.push(endLine);
+                            
+                            // Add control point drag behavior
+                            controlPoint.addEventListener('mousedown', (e) => {
+                                if (e.button !== 0) return;
+                                e.stopPropagation();
+                                isDraggingControlPoint = true;
+                                selectedControlPoint = controlPoint;
+                                controlPoint.classList.add('selected');
+                                
+                                const rect = controlPoint.getBoundingClientRect();
+                                startX = e.clientX - rect.left;
+                                startY = e.clientY - rect.top;
+                                controlPoint.wasManuallyMoved = true;
+                            });
+                            
+                            // Add deletion function
+                            const deleteConnection = () => {
+                                const startIndex = leaderLines.indexOf(startLine);
+                                const endIndex = leaderLines.indexOf(endLine);
+                                
+                                if (startIndex > -1) {
+                                    leaderLines.splice(startIndex, 1);
+                                    startLine.remove();
+                                }
+                                
+                                if (endIndex > -1) {
+                                    leaderLines.splice(endIndex > startIndex ? endIndex - 1 : endIndex, 1);
+                                    endLine.remove();
+                                }
+                                
+                                controlPoint.remove();
+                                saveToHistory();
+                            };
+                            
+                            // Make lines clickable for deletion
+                            if (startLine.element) {
+                                startLine.element.style.cursor = 'pointer';
+                                startLine.element.title = 'Klicken zum Löschen der Verbindung';
+                                startLine.element.addEventListener('click', deleteConnection);
+                            }
+                            
+                            if (endLine.element) {
+                                endLine.element.style.cursor = 'pointer';
+                                endLine.element.title = 'Klicken zum Löschen der Verbindung';
+                                endLine.element.addEventListener('click', deleteConnection);
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Fehler beim Wiederherstellen der Verbindung:', error);
+                }
+            });
+            
+            saveToHistory();
+        }
+        
+        function snapToGrid(value) {
+            return Math.round(value / gridSize) * gridSize;
+        }
+
+        function snapFinal(element) {
+            if (!element) return;
+            
+            // Nur normale Blöcke snappen, keine Kontrollpunkte
+            if (!element.classList.contains('line-control-point')) {
+                const x = parseInt(element.style.left) || 0;
+                const y = parseInt(element.style.top) || 0;
+                
+                element.style.left = `${snapToGrid(x)}px`;
+                element.style.top = `${snapToGrid(y)}px`;
+
+                // Update der Linien für normale Blöcke
+                leaderLines.forEach(line => {
+                    const startShape = line.start.element ? line.start.element.closest('.pap-shape') : null;
+                    const endShape = line.end.element ? line.end.element.closest('.pap-shape') : null;
+                    
+                    if ((startShape && startShape === element) || (endShape && endShape === element)) {
+                        line.position();
+                    }
+                });
+            }
+        }
+
+        function startDragging(e) {
+            if (e.button !== 0) return;
+            if (e.target.classList.contains('connection-point') || connecting) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+
+            // Allow contenteditable spans to be edited
+            if (e.target.contentEditable === 'true') {
+                return;
+            }
+            
+            const target = e.target.closest('.pap-shape');
+            if (!target) return;
+
+            const drawingArea = document.getElementById('drawing-area');
+            isDragging = true;
+            selectedElement = target;
+
+            const rect = target.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+
+            if (!target.parentElement.classList.contains('drawing-area')) {
+                selectedElement = target.cloneNode(true);
+                selectedElement.style.position = 'absolute';
+                drawingArea.appendChild(selectedElement);
+                createConnectionPoints(selectedElement);
+                selectedElement.addEventListener('mousedown', startDragging);
+
+                const drawingRect = drawingArea.getBoundingClientRect();
+                const newX = e.clientX - drawingRect.left - rect.width / 2;
+                const newY = e.clientY - drawingRect.top - rect.height / 2;
+                
+                selectedElement.style.left = `${snapToGrid(newX)}px`;
+                selectedElement.style.top = `${snapToGrid(newY)}px`;
+
+                // Make the text editable in the drawing area
+                const span = selectedElement.querySelector('span');
+                if (span) {
+                    span.contentEditable = 'true';
+                    span.addEventListener('input', saveToHistory);
+                    span.addEventListener('blur', saveToHistory);
+                }
+            }
+
+            selectedElement.classList.add('dragging');
+            selectedElement.classList.add('selected');
+            document.querySelectorAll('.pap-shape').forEach(shape => {
+                if (shape !== selectedElement) shape.classList.remove('selected');
+            });
+
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function createControlPoint(line) {
+            const point = document.createElement('div');
+            point.className = 'line-control-point';
+            document.querySelector('.drawing-area').appendChild(point);
+            
+            let startPos = line.start.getBoundingClientRect();
+            let endPos = line.end.getBoundingClientRect();
+            const drawingRect = document.querySelector('.drawing-area').getBoundingClientRect();
+            let midX = (startPos.x + endPos.x) / 2 - drawingRect.left;
+            let midY = (startPos.y + endPos.y) / 2 - drawingRect.top;
+
+            point.style.left = `${midX}px`;
+            point.style.top = `${midY}px`;
+            
+            point.dataset.offsetX = "0";
+            point.dataset.offsetY = "0";
+
+            point.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return;
+                e.stopPropagation();
+                isDraggingControlPoint = true;
+                selectedControlPoint = point;
+                point.classList.add('selected');
+                
+                const rect = point.getBoundingClientRect();
+                startX = e.clientX - rect.left;
+                startY = e.clientY - rect.top;
+            });
+
+            point.addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.querySelectorAll('.line-control-point').forEach(p => p.classList.remove('selected'));
+                point.classList.add('selected');
+                selectedControlPoint = point;
+            });
+
+            point.tabIndex = 0;
+            controlPoints.set(line, point);
+            return point;
+        }
+
+        function handleMouseMove(e) {
+            if (isDraggingControlPoint && selectedControlPoint) {
+                const drawingRect = document.getElementById('drawing-area').getBoundingClientRect();
+                
+                // Direkte Position-Updates für flüssigere Bewegung
+                const mouseX = e.clientX - drawingRect.left;
+                const mouseY = e.clientY - drawingRect.top;
+
+                selectedControlPoint.style.left = `${mouseX}px`;
+                selectedControlPoint.style.top = `${mouseY}px`;
+
+                // Sofortige Aktualisierung der verbundenen Linien
+                if (selectedControlPoint.startLine && selectedControlPoint.endLine) {
+                    requestAnimationFrame(() => {
+                        selectedControlPoint.startLine.position();
+                        selectedControlPoint.endLine.position();
+                    });
+                }
+            } else if (isDragging && selectedElement) {
+                const drawingRect = document.getElementById('drawing-area').getBoundingClientRect();
+                
+                let newX = e.clientX - drawingRect.left - startX;
+                let newY = e.clientY - drawingRect.top - startY;
+
+                newX = snapToGrid(newX);
+                newY = snapToGrid(newY);
+
+                const maxX = drawingRect.width - selectedElement.offsetWidth;
+                const maxY = drawingRect.height - selectedElement.offsetHeight;
+                newX = Math.max(0, Math.min(newX, maxX));
+                newY = Math.max(0, Math.min(newY, maxY));
+
+                selectedElement.style.left = `${newX}px`;
+                selectedElement.style.top = `${newY}px`;
+                
+                // Update verbundener Linien
+                document.querySelectorAll('.line-control-point').forEach(controlPoint => {
+                    if (controlPoint.startLine && controlPoint.endLine) {
+                        // Prüfen, ob der bewegte Block mit einer der Linien verbunden ist
+                        const startLine = controlPoint.startLine;
+                        const endLine = controlPoint.endLine;
+                        
+                        let needsUpdate = false;
+                        
+                        if (startLine.start && typeof startLine.start.closest === 'function') {
+                            const startBlock = startLine.start.closest('.pap-shape');
+                            if (startBlock === selectedElement) {
+                                needsUpdate = true;
+                            }
+                        }
+                        
+                        if (endLine.end && typeof endLine.end.closest === 'function') {
+                            const endBlock = endLine.end.closest('.pap-shape');
+                            if (endBlock === selectedElement) {
+                                needsUpdate = true;
+                            }
+                        }
+                        
+                        if (needsUpdate) {
+                            startLine.position();
+                            endLine.position();
+                        }
+                    }
+                });
+            }
+        }
+
+        function handleMouseUp(e) {
+            if (isDraggingControlPoint) {
+                isDraggingControlPoint = false;
+                selectedControlPoint.classList.remove('selected');
+                
+                // Finale Aktualisierung der Linienposition mit kleiner Verzögerung
+                if (selectedControlPoint.startLine && selectedControlPoint.endLine) {
+                    setTimeout(() => {
+                        requestAnimationFrame(() => {
+                            selectedControlPoint.startLine.position();
+                            selectedControlPoint.endLine.position();
+                        });
+                    }, 50);
+                }
+                selectedControlPoint = null;
+                return;
+            }
+
+            if (connecting && mouseOverPoint && mouseOverPoint.element !== connectionStart?.element) {
+                return;
+            }
+
+            if (connecting) {
+                const activePoint = document.querySelector('.connection-point.active');
+                if (activePoint) activePoint.classList.remove('active');
+                document.querySelectorAll('.connection-point').forEach(p => {
+                    p.classList.remove('potential-target');
+                    p.classList.remove('highlight');
+                });
+                connecting = false;
+                connectionStart = null;
+            }
+
+            if (selectedElement) {
+                selectedElement.classList.remove('dragging');
+                snapFinal(selectedElement);
+                saveToHistory();
+            } else if (isDraggingControlPoint) {
+                saveToHistory();
+            }
+            isDragging = false;
+            isDraggingControlPoint = false;
+            selectedElement = null;
+        }
+
+        function clearDrawingArea() {
+            const drawingArea = document.getElementById('drawing-area');
+            // Remove all shapes
+            drawingArea.querySelectorAll('.pap-shape').forEach(shape => shape.remove());
+            // Remove all control points
+            document.querySelectorAll('.line-control-point').forEach(point => point.remove());
+            // Remove all leader lines
+            leaderLines.forEach(line => {
+                if (line && typeof line.remove === 'function') {
+                    line.remove();
+                }
+            });
+            leaderLines = [];
+            controlPoints = new Map();
+        }
+
+        function loadTask(input) {
+            const file = input.files[0];
+            if (!file) return;
+        
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const task = JSON.parse(e.target.result);
+                    
+                    // Clear existing content
+                    clearDrawingArea();
+                    
+                    // Set title and description
+                    document.getElementById('task-title').value = task.title || '';
+                    document.getElementById('task-description').value = task.description || '';
+                    
+                    // Clear and load hints
+                    const hintsContainer = document.getElementById('hints-container');
+                    hintsContainer.innerHTML = '';
+                    if (task.hints && Array.isArray(task.hints)) {
+                        task.hints.forEach(hint => addHint(hint));
+                    }
+                    
+                    // Create blocks map to store references
+                    const blocksMap = new Map();
+                    
+                    // Create required blocks
+                    if (task.availableBlocks.required) {
+                        task.availableBlocks.required.forEach(block => {
+                            const shape = createBlock(block);
+                            blocksMap.set(block.text, shape);
+                        });
+                    }
+                    
+                    // Create optional blocks
+                    if (task.availableBlocks.optional) {
+                        task.availableBlocks.optional.forEach(block => {
+                            const shape = createBlock(block);
+                            blocksMap.set(block.text, shape);
+                        });
+                    }
+        
+                    // Kleine Verzögerung um sicherzustellen, dass alle Blöcke gerendert sind
+                    setTimeout(() => {
+                        // Create connections
+                        if (task.solution && task.solution.connections) {
+                            task.solution.connections.forEach((connection, index) => {
+                                const [fromText, toText, condition] = connection;
+                                const startBlock = blocksMap.get(fromText);
+                                const endBlock = blocksMap.get(toText);
+                                
+                                if (!startBlock || !endBlock) return;
+        
+                                // Bestimme die korrekten Verbindungspunkte
+                                let startPoint;
+                                if (startBlock.classList.contains('decision')) {
+                                    startPoint = startBlock.querySelector(`.connection-point.${condition === 'nein' ? 'left' : 'right'}`);
+                                } else {
+                                    startPoint = startBlock.querySelector('.connection-point.bottom');
+                                }
+                                
+                                const endPoint = endBlock.querySelector('.connection-point.top');
+                                
+                                if (!startPoint || !endPoint) return;
+        
+                                // Erstelle Kontrollpunkt
+                                const controlPoint = document.createElement('div');
+                                controlPoint.className = 'line-control-point';
+                                document.querySelector('.drawing-area').appendChild(controlPoint);
+                                
+                                // Berechne die Position des Kontrollpunkts
+                                const midX = (parseInt(startBlock.style.left) + parseInt(endBlock.style.left)) / 2;
+                                const midY = (parseInt(startBlock.style.top) + parseInt(endBlock.style.top)) / 2;
+                                
+                                controlPoint.style.left = `${midX}px`;
+                                controlPoint.style.top = `${midY}px`;
+        
+                                // Erstelle die Leader-Lines mit korrekten Start- und Endpunkten
+                                const startLine = new LeaderLine(
+                                    startPoint,
+                                    LeaderLine.pointAnchor(controlPoint),
+                                    {
+                                        color: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
+                                        size: 2,
+                                        path: 'straight',
+                                        startSocket: startPoint.dataset.position,
+                                        endSocket: 'bottom',
+                                        endPlug: 'behind',
+                                        startSocketGravity: 0,
+                                        endSocketGravity: 0
+                                    }
+                                );
+                                
+                                const endLine = new LeaderLine(
+                                    LeaderLine.pointAnchor(controlPoint),
+                                    endPoint,
+                                    {
+                                        color: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
+                                        size: 2,
+                                        path: 'straight',
+                                        startSocket: 'top',
+                                        endSocket: endPoint.dataset.position,
+                                        endPlug: 'arrow3',
+                                        startSocketGravity: 0,
+                                        endSocketGravity: 0
+                                    }
+                                );
+                                
+                                // Speichere die Referenzen
+                                controlPoint.startLine = startLine;
+                                controlPoint.endLine = endLine;
+                                startLine.controlPoint = controlPoint;
+                                endLine.controlPoint = controlPoint;
+                                
+                                // Füge die Linien zum Array hinzu
+                                leaderLines.push(startLine);
+                                leaderLines.push(endLine);
+                                
+                                // Füge die Drag-Funktionalität für den Kontrollpunkt hinzu
+                                controlPoint.addEventListener('mousedown', (e) => {
+                                    if (e.button !== 0) return;
+                                    e.stopPropagation();
+                                    isDraggingControlPoint = true;
+                                    selectedControlPoint = controlPoint;
+                                    controlPoint.classList.add('selected');
+                                    
+                                    const rect = controlPoint.getBoundingClientRect();
+                                    startX = e.clientX - rect.left;
+                                    startY = e.clientY - rect.top;
+                                    controlPoint.wasManuallyMoved = true;
+                                });
+                                
+                                // Füge die Lösch-Funktion hinzu
+                                const deleteConnection = () => {
+                                    startLine.remove();
+                                    endLine.remove();
+                                    controlPoint.remove();
+                                    leaderLines = leaderLines.filter(l => l !== startLine && l !== endLine);
+                                    saveToHistory();
+                                };
+                                
+                                // Mache die Linien klickbar zum Löschen
+                                [startLine, endLine].forEach(line => {
+                                    if (line.element) {
+                                        line.element.style.cursor = 'pointer';
+                                        line.element.title = 'Klicken zum Löschen der Verbindung';
+                                        line.element.addEventListener('click', deleteConnection);
+                                    }
+                                });
+                            });
+                        }
+                        
+                        // Reset file input und speichere den Status
+                        input.value = '';
+                        saveToHistory();
+                    }, 100);
+                    
+                } catch (error) {
+                    console.error('Error loading task:', error);
+                    alert('Fehler beim Laden der JSON-Datei: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function saveTask() {
+            const drawingArea = document.getElementById('drawing-area');
+            const shapes = Array.from(drawingArea.querySelectorAll('.pap-shape'));
+            const title = document.getElementById('task-title').value;
+            const description = document.getElementById('task-description').value;
+            const hints = collectHints();
+
+            if (!title || !description) {
+                alert('Bitte Titel und Beschreibung eingeben!');
+                return;
+            }
+
+            // Find connected blocks
+            const connectedBlocks = new Set();
+            const connections = [];
+
+            // Process all control points to find connections
+            document.querySelectorAll('.line-control-point').forEach(controlPoint => {
+                if (!controlPoint.startLine || !controlPoint.endLine) return;
+                
+                try {
+                    const startElement = controlPoint.startLine.start;
+                    const endElement = controlPoint.endLine.end;
+                    
+                    if (!startElement || !endElement) return;
+                    
+                    const startShape = startElement.closest('.pap-shape');
+                    const endShape = endElement.closest('.pap-shape');
+                    
+                    if (!startShape || !endShape) return;
+                    
+                    const startText = startShape.querySelector('span').textContent.trim();
+                    const endText = endShape.querySelector('span').textContent.trim();
+                    
+                    // Determine condition based on connection point
+                    let condition = "ja";
+                    if (startShape.classList.contains('decision')) {
+                        if (startElement.classList.contains('left')) {
+                            condition = "nein";
+                        }
+                    }
+                    
+                    // Add the connection
+                    connections.push([startText, endText, condition]);
+                    
+                    // Mark blocks as connected
+                    connectedBlocks.add(startShape);
+                    connectedBlocks.add(endShape);
+                } catch (error) {
+                    console.error('Error processing connection:', error);
+                }
+            });
+
+            const requiredBlocks = [];
+            const optionalBlocks = [];
+
+            shapes.forEach(shape => {
+                const block = {
+                    type: shape.getAttribute('data-shape'),
+                    text: shape.querySelector('span').textContent.trim(),
+                    position: {
+                        x: parseInt(shape.style.left),
+                        y: parseInt(shape.style.top)
+                    }
+                };
+
+                if (connectedBlocks.has(shape)) {
+                    requiredBlocks.push(block);
+                } else {
+                    optionalBlocks.push(block);
+                }
+            });
+
+            const task = {
+                id: Date.now(),
+                title,
+                description,
+                hints,
+                availableBlocks: {
+                    required: requiredBlocks,
+                    optional: optionalBlocks
+                },
+                solution: {
+                    connections: connections,
+                    controlPoints: connections.map(() => ({
+                        offsetX: 0,
+                        offsetY: 0
+                    })),
+                    initialPositions: shapes.map(shape => ({
+                        text: shape.querySelector('span').textContent.trim(),
+                        x: parseInt(shape.style.left),
+                        y: parseInt(shape.style.top)
+                    }))
+                }
+            };
+
+            // Create and download JSON file
+            const blob = new Blob([JSON.stringify(task, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `task_${task.id}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Add event listeners for dragging and mouse events
+        document.querySelectorAll('.pap-shape').forEach(shape => {
+            shape.addEventListener('mousedown', startDragging);
+        });
+
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+
+        // Delete key to remove selected shape
+        // Keyboard shortcuts and event handlers
+        document.addEventListener('keydown', (e) => {
+            // Undo/Redo shortcuts
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'z' && !e.shiftKey) {
+                    e.preventDefault();
+                    undo();
+                } else if ((e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+                    e.preventDefault();
+                    redo();
+                }
+            }
+            
+            // Delete key to remove selected shape or control point
+            if (e.key === 'Delete') {
+                const selectedControlPoint = document.querySelector('.line-control-point.selected');
+                if (selectedControlPoint) {
+                    // Find and remove the associated line
+                    for (const [line, point] of controlPoints.entries()) {
+                        if (point === selectedControlPoint) {
+                            const index = leaderLines.indexOf(line);
+                            if (index > -1) {
+                                leaderLines.splice(index, 1);
+                                line.remove();
+                                point.remove();
+                                controlPoints.delete(line);
+                                saveToHistory();
+                            }
+                            break;
+                        }
+                    }
+                } else {
+                    const selectedShape = document.querySelector('.pap-shape.selected');
+                    if (selectedShape) {
+                        // Remove associated lines and control points
+                        leaderLines = leaderLines.filter(line => {
+                            if (line.start.closest('.pap-shape') === selectedShape || 
+                                line.end.closest('.pap-shape') === selectedShape) {
+                                const controlPoint = controlPoints.get(line);
+                                if (controlPoint) {
+                                    controlPoint.remove();
+                                    controlPoints.delete(line);
+                                }
+                                line.remove();
+                                return false;
+                            }
+                            return true;
+                        });
+                        selectedShape.remove();
+                        saveToHistory();
+                    }
+                }
+            }
+
+            // Arrow keys for fine-tuning position
+            if (selectedElement && !e.ctrlKey && !e.metaKey) {
+                const step = e.shiftKey ? gridSize * 2 : gridSize;
+                let moved = false;
+                
+                switch (e.key) {
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        selectedElement.style.left = `${parseInt(selectedElement.style.left || 0) - step}px`;
+                        moved = true;
+                        break;
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        selectedElement.style.left = `${parseInt(selectedElement.style.left || 0) + step}px`;
+                        moved = true;
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        selectedElement.style.top = `${parseInt(selectedElement.style.top || 0) - step}px`;
+                        moved = true;
+                        break;
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        selectedElement.style.top = `${parseInt(selectedElement.style.top || 0) + step}px`;
+                        moved = true;
+                        break;
+                }
+
+                if (moved) {
+                    leaderLines.forEach(line => {
+                        if (line.start.closest('.pap-shape') === selectedElement || 
+                            line.end.closest('.pap-shape') === selectedElement) {
+                            line.position();
+                        }
+                    });
+                    saveToHistory();
+                }
+            }
+        });
+
+        // Initialize the document with a saveToHistory() call to ensure undo stack has initial state
+        setTimeout(saveToHistory, 500);
+    });
+    </script>
+</body>
+</html>

@@ -8,11 +8,20 @@
     --secondary-color: #6c757d;
     --success-color: #28a745;
     --error-color: #dc3545;
-    --decision-color: #FFA500;
+    --decision-color: #ffd700;
     --process-color: #b8daff;
     --io-color: #d4edda;
     --start-end-color: #f8d7da;
     --achievement-bg: rgba(0, 0, 0, 0.8);
+    --valid-connection: #28a745;
+    --invalid-connection: #dc3545;
+    
+    /* Difficulty level colors */
+    --difficulty-1-color: #7cb342;
+    --difficulty-2-color: #42a5f5;
+    --difficulty-3-color: #ffca28;
+    --difficulty-4-color: #ef6c00;
+    --difficulty-5-color: #d32f2f;
 }
 
 [data-theme="dark"] {
@@ -22,11 +31,20 @@
     --border-color: #444;
     --hover-color: #3d3d3d;
     --primary-color: #4d9eff;
-    --decision-color: #ff8c00;
+    --decision-color: #8b7300;
     --process-color: #1a4b81;
     --io-color: #155724;
     --start-end-color: #721c24;
     --achievement-bg: rgba(255, 255, 255, 0.1);
+    --valid-connection: #198754;
+    --invalid-connection: #bb2d3b;
+    
+    /* Difficulty level colors for dark theme */
+    --difficulty-1-color: #8bc34a;
+    --difficulty-2-color: #64b5f6;
+    --difficulty-3-color: #ffd54f;
+    --difficulty-4-color: #ff9800;
+    --difficulty-5-color: #f44336;
 }
 
 body {
@@ -56,22 +74,78 @@ body {
 }
 
 .level-selection {
-    padding: 64px 20px 20px;
-    height: calc(100vh - 84px);
+    padding: 84px 20px 20px;  /* Increased from 64px to 84px to move content down */
+    height: calc(100vh - 104px);  /* Adjusted accordingly */
     overflow-y: auto;
 }
 
+/* Updated level grid for difficulty grouping */
 .level-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 20px;
     max-width: 1200px;
     margin: 20px auto;
 }
 
+/* Difficulty section header */
+.difficulty-header {
+    width: 100%;
+    margin: 10px 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.difficulty-header h2 {
+    margin: 0;
+    padding: 10px 15px;
+    font-size: 1.4em;
+    position: relative;
+    z-index: 1;
+    color: var(--text-color);
+    background: var(--container-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Level cards container for each difficulty section */
+.difficulty-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Difficulty level colors for headers */
+.difficulty-header[data-level="1"] h2 {
+    background: linear-gradient(135deg, var(--difficulty-1-color) 0%, var(--container-bg) 80%);
+    border-left: 5px solid var(--difficulty-1-color);
+}
+
+.difficulty-header[data-level="2"] h2 {
+    background: linear-gradient(135deg, var(--difficulty-2-color) 0%, var(--container-bg) 80%);
+    border-left: 5px solid var(--difficulty-2-color);
+}
+
+.difficulty-header[data-level="3"] h2 {
+    background: linear-gradient(135deg, var(--difficulty-3-color) 0%, var(--container-bg) 80%);
+    border-left: 5px solid var(--difficulty-3-color);
+}
+
+.difficulty-header[data-level="4"] h2 {
+    background: linear-gradient(135deg, var(--difficulty-4-color) 0%, var(--container-bg) 80%);
+    border-left: 5px solid var(--difficulty-4-color);
+}
+
+.difficulty-header[data-level="5"] h2 {
+    background: linear-gradient(135deg, var(--difficulty-5-color) 0%, var(--container-bg) 80%);
+    border-left: 5px solid var(--difficulty-5-color);
+}
+
 .unlock-all-btn {
     display: block;
-    margin: 0 auto 20px;
+    margin: 10px auto 20px;  /* Added 10px top margin */
     padding: 10px 20px;
     font-size: 1.1em;
     background: linear-gradient(45deg, var(--primary-color), #4CAF50);
@@ -169,42 +243,119 @@ body {
 
 .main-container {
     display: grid;
-    grid-template-columns: 160px 160px 1fr;
+    grid-template-columns: 160px 1fr 322px;
     grid-template-rows: calc(100vh - 48px);
     gap: 0;
     background: var(--border-color);
     margin-top: 48px;
 }
 
+/* Connection-related styles */
+.connection-preview {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.pap-shape .connection-point {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    opacity: 0;
+    transition: all 0.15s ease;
+    cursor: crosshair;
+    border: 2px solid var(--container-bg);
+    z-index: 100;
+}
+
+.pap-shape:hover .connection-point {
+    opacity: 0.7;
+}
+
+.pap-shape .connection-point:hover,
+.pap-shape .connection-point.active,
+.pap-shape .connection-point.highlight {
+    transform: scale(1.2);
+    opacity: 1;
+    box-shadow: 0 0 8px var(--primary-color);
+}
+
+/* Connection positions */
+.pap-shape .connection-point.top {
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.pap-shape .connection-point.right {
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.pap-shape .connection-point.bottom {
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.pap-shape .connection-point.left {
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Adjust connection points for decision blocks */
+.decision .connection-point.top {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.decision .connection-point.bottom {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.decision .connection-point.left {
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.decision .connection-point.right {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Decision block specific styles */
+.pap-shape.decision .connection-point.right::after,
+.pap-shape.decision .connection-point.left::after {
+    content: none;
+}
+
+.pap-shape.decision:hover .connection-point::after {
+    opacity: 1;
+}
+
 /* Leader Line Styles */
 .leader-line {
     cursor: pointer !important;
+    --line-color: var(--primary-color);
+    transition: all 0.2s ease;
+    z-index: 1 !important; /* Ensure lines are behind blocks */
 }
 
 .leader-line:hover {
     opacity: 0.7 !important;
 }
 
-.line-control-point {
-    width: 12px;
-    height: 12px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    position: absolute;
-    transform: translate(-50%, -50%);
-    cursor: move;
-    z-index: 1000;
-    border: 2px solid var(--container-bg);
-    transition: transform 0.2s ease;
-}
-
-.line-control-point:hover {
-    transform: translate(-50%, -50%) scale(1.2);
-}
-
-.line-control-point.selected {
-    background: var(--success-color);
-    box-shadow: 0 0 5px var(--success-color);
+.leader-line-path {
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .sidebar {
@@ -222,8 +373,7 @@ body {
     padding: 64px 6px 6px 6px;
     display: flex;
     flex-direction: column;
-    border-left: 1px solid var(--border-color);
-    max-width: 160px;
+    border-right: 1px solid var(--border-color);
     width: 100%;
 }
 
@@ -239,6 +389,7 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
+    padding: 0 16px;
     flex-shrink: 0;
 }
 
@@ -281,43 +432,60 @@ body {
 }
 
 .progress-container {
-    flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
-    max-width: 800px;
+    gap: 8px;
+    width: 100%;
+    max-width: 300px;
     margin: 0 auto;
 }
 
 .progress-bar {
-    flex: 1;
+    width: 100%;
     height: 8px;
     background: var(--border-color);
     border-radius: 4px;
     overflow: hidden;
+    position: relative;
 }
 
 .progress-fill {
     height: 100%;
-    background: var(--primary-color);
-    width: 0%;
+    background: linear-gradient(90deg, var(--primary-color) 0%, #4d9eff 100%);
+    border-radius: 4px;
     transition: width 0.3s ease;
+    box-shadow: 0 0 4px var(--primary-color);
 }
 
 .lives {
     display: flex;
-    gap: 4px;
-    font-size: 1em;
-    flex-shrink: 0;
+    gap: 10px;
+    margin: 10px 0;
+    position: relative;
 }
 
 .lives span {
-    opacity: 1;
+    font-size: 24px;
     transition: opacity 0.3s ease;
 }
 
 .lives span.lost {
-    opacity: 0.2;
+    opacity: 0.3;
+}
+
+#life-timer {
+    position: absolute;
+    right: -55px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 2px 5px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-family: monospace;
+    animation: pulse 1s infinite;
 }
 
 .task-info h3 {
@@ -328,8 +496,10 @@ body {
 
 .stats-bar {
     display: flex;
+    justify-content: center;
     gap: 16px;
     font-size: 0.85em;
+    width: 100%;
     background: transparent;
     padding: 0;
     margin: 0;
@@ -346,6 +516,48 @@ body {
     overflow-y: auto;
     max-height: calc(100vh - 250px);
     font-size: 0.85em;
+}
+
+/* Markdown styles for task description */
+.task-description h1, 
+.task-description h2, 
+.task-description h3 {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    color: var(--primary-color);
+}
+
+.task-description p {
+    margin: 0.5em 0;
+}
+
+.task-description ul, 
+.task-description ol {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+}
+
+.task-description code {
+    background: var(--container-bg);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.task-description pre {
+    background: var(--container-bg);
+    padding: 1em;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 0.5em 0;
+}
+
+.task-description blockquote {
+    border-left: 3px solid var(--primary-color);
+    margin: 0.5em 0;
+    padding-left: 1em;
+    color: var(--secondary-color);
 }
 
 .task-controls {
@@ -415,21 +627,6 @@ body {
     transform: scale(1.02);
 }
 
-/* Navigation buttons */
-.task-nav button:nth-child(1),
-.task-nav button:nth-child(2) {
-    grid-row: 1;
-    font-size: 0.75em;
-}
-
-/* Tool buttons */
-.task-nav button:nth-child(3),
-.task-nav button:nth-child(4),
-.task-nav button:nth-child(5) {
-    grid-column: span 1;
-    font-size: 0.95em;
-}
-
 .drawing-area {
     background: var(--container-bg);
     background-image: 
@@ -476,62 +673,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 2; /* Ensure blocks are above lines */
 }
 
 .pap-shape.connecting {
     cursor: crosshair;
-}
-
-.pap-shape .connection-point {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    opacity: 1;
-    transition: all 0.2s ease;
-    cursor: crosshair;
-    border: 2px solid var(--container-bg);
-    z-index: 100;
-}
-
-.pap-shape .connection-point:hover,
-.pap-shape .connection-point.active,
-.pap-shape .connection-point.highlight {
-    transform: scale(1.5);
-    background: var(--success-color);
-    box-shadow: 0 0 5px var(--success-color);
-    z-index: 101;
-}
-
-.pap-shape .connection-point.potential-target:hover {
-    background: var(--success-color);
-    transform: scale(1.5);
-    z-index: 101;
-}
-
-.pap-shape .connection-point.top {
-    top: -6px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.pap-shape .connection-point.right {
-    right: -6px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.pap-shape .connection-point.bottom {
-    bottom: -6px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.pap-shape .connection-point.left {
-    left: -6px;
-    top: 50%;
-    transform: translateY(-50%);
 }
 
 .pap-shape.dragging {
@@ -574,108 +720,58 @@ body {
     transform: skew(20deg);
 }
 
-/* Decision block styling */
 .decision {
-    width: 64px;
-    height: 64px;
-    margin: 4px auto;
+    width: 90px;  /* von 80px auf 90px erhöht */
+    height: 90px; /* von 80px auf 90px erhöht */
+    margin: 8px auto;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
-    background: transparent;
-    border: none;
-    cursor: grab;
-    transition: transform 0.2s ease;
-}
-
-/* Diamond shape */
-.decision::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
     background: var(--decision-color);
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    transition: transform 0.2s ease;
-    z-index: 0;
 }
 
-/* Border */
-.decision::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border: 2px solid var(--border-color);
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    transition: all 0.2s ease;
-    z-index: 1;
-    pointer-events: none;
-}
-
-/* Hover effects */
-.decision:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-/* Selected state */
-.decision.selected::after {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px var(--primary-color);
-}
-
-/* Dragging state */
-.decision.dragging {
-    transform: none;
-    box-shadow: none;
-}
-
-.decision.dragging::before,
-.decision.dragging::after {
-    opacity: 0.5;
-}
-
-/* Connection points precisely aligned with diamond points */
-.decision .connection-point.top {
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.decision .connection-point.right {
-    right: 0;
-    top: 50%;
-    transform: translate(50%, -50%);
-}
-
-.decision .connection-point.bottom {
-    bottom: 0;
-    left: 50%;
-    transform: translate(-50%, 50%);
-}
-
-.decision .connection-point.left {
-    left: 0;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
-
-/* Text content */
-.decision span {
+.decision > span {
     position: relative;
-    z-index: 1;
-    pointer-events: none;
-    display: inline-block;
-    max-width: 80%;
+    z-index: 2;
     text-align: center;
-    transform: none;
+    max-width: 70px;  /* von 60px auf 70px erhöht */
 }
 
-/* Dragging state */
-.decision.dragging {
-    opacity: 0.5;
-    cursor: grabbing;
+.decision .label-ja {
+    position: absolute;
+    right: -20px;
+    top: calc(50% - 6px);
+    font-size: 11px;
+    color: var(--text-color);
+    font-weight: bold;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.decision .label-nein {
+    position: absolute;
+    left: -25px;
+    top: calc(50% - 6px);
+    font-size: 11px;
+    color: var(--text-color);
+    font-weight: bold;
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* Fix für die Sidebar-Version */
+.sidebar .decision {
+    width: 70px !important;  /* von 60px auf 70px erhöht */
+    height: 70px !important; /* von 60px auf 70px erhöht */
+    margin: 16px auto !important;
+}
+
+.sidebar .decision .label-ja,
+.sidebar .decision .label-nein {
+    font-size: 9px;
+    font-weight: normal;
 }
 
 .help-panel {
@@ -736,9 +832,57 @@ body {
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
+    0% { opacity: 0.9; }
+    50% { opacity: 1; }
+    100% { opacity: 0.9; }
+}
+
+.line-control-point {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: var(--primary-color);
+    border: 2px solid var(--container-bg);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    cursor: move;
+    z-index: 1000;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.line-control-point:hover {
+    transform: translate(-50%, -50%) scale(1.2);
+    box-shadow: 0 0 5px var(--primary-color);
+}
+
+.line-control-point.dragging {
+    transform: translate(-50%, -50%) scale(1.2);
+    background: var(--success-color);
+    box-shadow: 0 0 8px var(--success-color);
+}
+
+/* Control points for lines */
+.line-control-point {
+    width: 12px;
+    height: 12px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    position: absolute;
+    cursor: move;
+    z-index: 100;
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.line-control-point:hover {
+    transform: scale(1.5);
+    background: var(--highlight-color);
+}
+
+.line-control-point.selected {
+    background: var(--highlight-color);
+    transform: scale(1.5);
+    box-shadow: 0 0 8px var(--highlight-color);
 }
 
 @media (max-width: 768px) {
@@ -768,4 +912,664 @@ body {
     .task-description {
         max-height: 150px;
     }
+}
+
+/* Neue Gamification Styles */
+
+.weekly-progress {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.weekly-progress h3 {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.day-progress {
+    display: inline-block;
+    width: 30px;
+    height: 100px;
+    margin: 0 4px;
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.progress-bar {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: linear-gradient(to top, #4CAF50, #81C784);
+    border-radius: 4px;
+    transition: height 0.3s ease;
+}
+
+.day-label {
+    text-align: center;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.task-completion-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.completion-content {
+    background: #2A2A2A;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+}
+
+.performance-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.metric {
+    text-align: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.metric.bonus {
+    background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+    transform: scale(1.05);
+}
+
+.metric-icon {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.bonus-tag {
+    display: inline-block;
+    background: #FFD700;
+    color: #000;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.performance-tips {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.performance-tips ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.feedback-popup {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    background: #333;
+    padding: 10px 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.feedback-popup.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+.feedback-popup.positive {
+    background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+}
+
+.feedback-popup.negative {
+    background: linear-gradient(135deg, #f44336 0%, #e57373 100%);
+}
+
+.statistics-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.statistics-content {
+    background: #2A2A2A;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+/* Leben-System Styles */
+.lives {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.lives span {
+    font-size: 24px;
+    transition: opacity 0.3s ease;
+}
+
+.lives span.lost {
+    opacity: 0.3;
+}
+
+/* Badge-System Styles */
+.achievement {
+    position: fixed;
+    top: 20px;
+    right: -300px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.achievement.show {
+    transform: translateX(-320px);
+}
+
+.achievement-icon {
+    font-size: 32px;
+}
+
+.achievement-text {
+    color: #000;
+}
+
+.achievement-title {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.achievement-name {
+    font-size: 18px;
+}
+
+/* Roadmap Button */
+.roadmap-button {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #4d9eff 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin: 0 auto 20px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.roadmap-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Roadmap Overlay */
+.roadmap-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1100;
+    animation: fadeIn 0.3s ease;
+}
+
+.roadmap-content {
+    background: var(--container-bg);
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.roadmap-content h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--primary-color);
+}
+
+.roadmap-section {
+    margin-bottom: 30px;
+}
+
+.roadmap-section h3 {
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+/* Level Roadmap */
+.level-roadmap {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 20px 10px;
+    gap: 30px;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.level-roadmap::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 45px;
+    height: 4px;
+    background: var(--border-color);
+    z-index: 1;
+}
+
+.roadmap-node {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    background: var(--container-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    cursor: default;
+}
+
+.roadmap-node.completed {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+
+.roadmap-node.current {
+    transform: scale(1.2);
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 0 15px var(--primary-color);
+}
+
+.roadmap-node.has-reward {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    border-color: #FFD700;
+}
+
+.roadmap-node .node-level {
+    font-weight: bold;
+}
+
+.roadmap-node .node-reward {
+    position: absolute;
+    top: -10px;
+    right: -5px;
+    font-size: 14px;
+    animation: bounce 1s infinite alternate;
+}
+
+.roadmap-node .current-marker {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    animation: pulse 1s infinite;
+}
+
+@keyframes bounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-5px); }
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+/* Badge Collection */
+.badge-collection {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+    padding: 10px;
+}
+
+.badge-item {
+    background: var(--hover-color);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease;
+    opacity: 0.5;
+    filter: grayscale(0.8);
+}
+
+.badge-item.earned {
+    opacity: 1;
+    filter: none;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.badge-item .badge-icon {
+    font-size: 36px;
+    margin-bottom: 8px;
+}
+
+.badge-item .badge-name {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.badge-item .badge-earned {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--success-color);
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* XP Progress in Roadmap */
+.xp-progress-container {
+    padding: 15px;
+    background: var(--hover-color);
+    border-radius: 8px;
+}
+
+.xp-progress-bar {
+    height: 20px;
+    background: var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.xp-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color) 0%, #4d9eff 100%);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.xp-progress-text {
+    text-align: center;
+    margin-top: 8px;
+    font-weight: bold;
+}
+
+.roadmap-close {
+    display: block;
+    margin: 20px auto 0;
+    padding: 10px 20px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.roadmap-close:hover {
+    background: #4d9eff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Tooltip System */
+.tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    max-width: 250px;
+    z-index: 1200;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    text-align: center;
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid rgba(0, 0, 0, 0.85);
+}
+
+/* Level unlock info */
+.level-unlock {
+    background: var(--primary-color);
+    color: white;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .performance-metrics {
+        grid-template-columns: 1fr;
+    }
+    
+    .badge-collection {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    }
+    
+    .level-roadmap {
+        padding-bottom: 30px;
+    }
+    
+    .roadmap-content {
+        width: 95%;
+        padding: 15px;
+    }
+}
+
+/* Tooltip für Level-Karten */
+.level-card[data-tooltip] {
+    position: relative;
+}
+
+/* XP Progress Bar */
+#xp-progress-container {
+    width: 80%;
+    margin: 10px auto;
+    background-color: #e0e0e0;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#xp-progress {
+    width: 0%;
+    height: 100%;
+    background-color: #4CAF50;
+    transition: width 0.5s ease-in-out;
+    border-radius: 10px;
+    background-image: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0.15) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(255, 255, 255, 0.15) 50%, 
+        rgba(255, 255, 255, 0.15) 75%, 
+        transparent 75%, 
+        transparent);
+    background-size: 20px 20px;
+    animation: progress-animation 1s linear infinite;
+}
+
+@keyframes progress-animation {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 20px 0;
+    }
+}
+
+/* Centered popup notification */
+.popup-notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+  padding: 25px 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  z-index: 2000;
+  text-align: center;
+  color: white;
+  min-width: 300px;
+  max-width: 80%;
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  backdrop-filter: blur(5px);
+}
+
+.popup-notification.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.popup-notification .emoji {
+  font-size: 60px;
+  display: block;
+  margin-bottom: 15px;
+  animation: bounce 1s infinite alternate;
+}
+
+.popup-notification .title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.popup-notification .message {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.popup-notification .button {
+  background: white;
+  color: #4CAF50;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  margin-top: 10px;
+}
+
+.popup-notification .button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.popup-notification.warning {
+  background: linear-gradient(135deg, #FFC107 0%, #FFD54F 100%);
+}
+
+.popup-notification.error {
+  background: linear-gradient(135deg, #F44336 0%, #E57373 100%);
+}
+
+.popup-notification.levelup {
+  background: linear-gradient(135deg, #673AB7 0%, #9575CD 100%);
+}
+
+.popup-notification.achievement {
+  background: linear-gradient(135deg, #FFC107 0%, #FFB300 100%);
+}
+
+@keyframes floatUp {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-50px); }
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  opacity: 1;
+  animation: floatUp 3s forwards;
 }

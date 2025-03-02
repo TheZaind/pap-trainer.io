@@ -1,0 +1,114 @@
+{
+  "id": 4,
+  "title": "Trinkgeld-Rechner",
+  "description": "### Beispielanwendung\nIn einem Restaurant möchten Gäste schnell das angemessene Trinkgeld berechnen.\n\n## Aufgabe\nErstelle einen Trinkgeld-Rechner, der:\n1. Den Rechnungsbetrag einliest\n2. Den gewünschten Trinkgeld-Prozentsatz einliest (üblich sind 5-10%)\n3. Das Trinkgeld und den Gesamtbetrag berechnet und ausgibt\n\n## Beispiel\n> Rechnungsbetrag: 45,80€\n> Trinkgeld-Prozentsatz: 10%\n> Trinkgeld: 4,58€\n> Gesamtbetrag: 50,38€",
+  "hints": [
+    "💡 **Tipp:**\n- Berechne zuerst das Trinkgeld: Rechnungsbetrag * (Prozentsatz/100)\n- Der Gesamtbetrag ist Rechnungsbetrag + Trinkgeld"
+  ],
+  "availableBlocks": {
+    "required": [
+      {
+        "type": "start-end",
+        "text": "Start",
+        "textC": "Start",
+        "position": {
+          "x": 576,
+          "y": 64
+        }
+      },
+      {
+        "type": "start-end",
+        "text": "Ende",
+        "textC": "End",
+        "position": {
+          "x": 576,
+          "y": 448
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Rechnungsbetrag",
+        "textC": "bill = float(input())",
+        "position": {
+          "x": 576,
+          "y": 128
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Trinkgeld%",
+        "textC": "tip_percent = float(input())",
+        "position": {
+          "x": 576,
+          "y": 192
+        }
+      },
+      {
+        "type": "process",
+        "text": "Trinkgeld = Rechnungsbetrag * (Trinkgeld% / 100)",
+        "textC": "tip = bill * (tip_percent / 100)",
+        "position": {
+          "x": 576,
+          "y": 256
+        }
+      },
+      {
+        "type": "process",
+        "text": "Gesamtbetrag = Rechnungsbetrag + Trinkgeld",
+        "textC": "total = bill + tip",
+        "position": {
+          "x": 576,
+          "y": 320
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Trinkgeld, Gesamtbetrag",
+        "textC": "print(f'Trinkgeld: {tip}€\\nGesamt: {total}€')",
+        "position": {
+          "x": 576,
+          "y": 384
+        }
+      }
+    ],
+    "optional": [
+      {
+        "type": "decision",
+        "text": "Trinkgeld% > 20?",
+        "textC": "tip_percent > 20",
+        "position": {
+          "x": 64,
+          "y": 128
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Warnung hoher Prozentsatz",
+        "textC": "print('Warnung: Hoher Prozentsatz!')",
+        "position": {
+          "x": 64,
+          "y": 192
+        }
+      }
+    ]
+  },
+  "solution": {
+    "connections": [
+      ["Start", "Eingabe: Rechnungsbetrag", "ja"],
+      ["Eingabe: Rechnungsbetrag", "Eingabe: Trinkgeld%", "ja"],
+      ["Eingabe: Trinkgeld%", "Trinkgeld = Rechnungsbetrag * (Trinkgeld% / 100)", "ja"],
+      ["Trinkgeld = Rechnungsbetrag * (Trinkgeld% / 100)", "Gesamtbetrag = Rechnungsbetrag + Trinkgeld", "ja"],
+      ["Gesamtbetrag = Rechnungsbetrag + Trinkgeld", "Ausgabe: Trinkgeld, Gesamtbetrag", "ja"],
+      ["Ausgabe: Trinkgeld, Gesamtbetrag", "Ende", "ja"]
+    ],
+    "initialPositions": [
+      {"text": "Start", "x": 576, "y": 64},
+      {"text": "Ende", "x": 576, "y": 448},
+      {"text": "Eingabe: Rechnungsbetrag", "x": 576, "y": 128},
+      {"text": "Eingabe: Trinkgeld%", "x": 576, "y": 192},
+      {"text": "Trinkgeld = Rechnungsbetrag * (Trinkgeld% / 100)", "x": 576, "y": 256},
+      {"text": "Gesamtbetrag = Rechnungsbetrag + Trinkgeld", "x": 576, "y": 320},
+      {"text": "Ausgabe: Trinkgeld, Gesamtbetrag", "x": 576, "y": 384}
+    ]
+  }
+}

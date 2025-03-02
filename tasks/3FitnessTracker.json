@@ -1,0 +1,395 @@
+{
+  "id": 10,
+  "title": "Fitness-Tracker",
+  "description": "### Beispielanwendung\nEine Fitness-App soll den Trainingsfortschritt eines Benutzers analysieren und Empfehlungen geben.\n\n## Aufgabe\nErstelle ein Programm, das:\n1. Die Anzahl der Trainingstage einliest\n2. Für jeden Tag folgende Daten erfasst:\n   - Trainingsart (1=Kraft, 2=Ausdauer, 3=Beweglichkeit)\n   - Trainingsdauer in Minuten\n   - Intensität (1=leicht, 2=mittel, 3=schwer)\n3. Am Ende auswertet:\n   - Gesamttrainingszeit\n   - Durchschnittliche Intensität\n   - Ausgewogenheit der Trainingsarten\n4. Eine Trainingsempfehlung gibt:\n   - \"Mehr Krafttraining\" wenn < 20% Kraft\n   - \"Mehr Ausdauer\" wenn < 20% Ausdauer\n   - \"Mehr Beweglichkeit\" wenn < 20% Beweglichkeit\n   - \"Gut ausgewogen\" wenn alle > 20%\n\n## Beispiel\n> 3 Trainingstage:\n> Tag 1: Kraft (60min, mittel)\n> Tag 2: Ausdauer (45min, schwer)\n> Tag 3: Kraft (30min, leicht)\n> \n> Auswertung:\n> - Gesamtzeit: 135min\n> - Durchschnitt Intensität: 2\n> - Empfehlung: Mehr Beweglichkeit",
+  "hints": [
+    "💡 **Tipp:**\n- Verwende Zähler für die verschiedenen Trainingsarten\n- Berechne die prozentualen Anteile der Trainingsarten"
+  ],
+  "availableBlocks": {
+    "required": [
+      {
+        "type": "start-end",
+        "text": "Start",
+        "textC": "Start",
+        "position": {
+          "x": 576,
+          "y": 64
+        }
+      },
+      {
+        "type": "start-end",
+        "text": "Ende",
+        "textC": "End",
+        "position": {
+          "x": 576,
+          "y": 1024
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Anzahl Tage",
+        "textC": "num_days = int(input('Anzahl Trainingstage: '))",
+        "position": {
+          "x": 576,
+          "y": 128
+        }
+      },
+      {
+        "type": "process",
+        "text": "GesamtZeit = 0",
+        "textC": "total_time = 0",
+        "position": {
+          "x": 576,
+          "y": 192
+        }
+      },
+      {
+        "type": "process",
+        "text": "KraftZeit = 0",
+        "textC": "strength_time = 0",
+        "position": {
+          "x": 576,
+          "y": 256
+        }
+      },
+      {
+        "type": "process",
+        "text": "AusdauerZeit = 0",
+        "textC": "cardio_time = 0",
+        "position": {
+          "x": 576,
+          "y": 320
+        }
+      },
+      {
+        "type": "process",
+        "text": "BeweglichkeitZeit = 0",
+        "textC": "flexibility_time = 0",
+        "position": {
+          "x": 576,
+          "y": 384
+        }
+      },
+      {
+        "type": "process",
+        "text": "SummeIntensität = 0",
+        "textC": "total_intensity = 0",
+        "position": {
+          "x": 576,
+          "y": 448
+        }
+      },
+      {
+        "type": "process",
+        "text": "i = 0",
+        "textC": "i = 0",
+        "position": {
+          "x": 576,
+          "y": 512
+        }
+      },
+      {
+        "type": "decision",
+        "text": "i < Anzahl Tage?",
+        "textC": "i < num_days",
+        "position": {
+          "x": 576,
+          "y": 576
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Trainingsart",
+        "textC": "workout_type = int(input('Trainingsart (1=Kraft, 2=Ausdauer, 3=Beweglichkeit): '))",
+        "position": {
+          "x": 576,
+          "y": 640
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Dauer",
+        "textC": "duration = int(input('Dauer (Minuten): '))",
+        "position": {
+          "x": 576,
+          "y": 704
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Intensität",
+        "textC": "intensity = int(input('Intensität (1=leicht, 2=mittel, 3=schwer): '))",
+        "position": {
+          "x": 576,
+          "y": 768
+        }
+      },
+      {
+        "type": "process",
+        "text": "GesamtZeit += Dauer",
+        "textC": "total_time += duration",
+        "position": {
+          "x": 576,
+          "y": 832
+        }
+      },
+      {
+        "type": "process",
+        "text": "SummeIntensität += Intensität",
+        "textC": "total_intensity += intensity",
+        "position": {
+          "x": 576,
+          "y": 896
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Trainingsart == 1?",
+        "textC": "workout_type == 1",
+        "position": {
+          "x": 448,
+          "y": 960
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Trainingsart == 2?",
+        "textC": "workout_type == 2",
+        "position": {
+          "x": 448,
+          "y": 1024
+        }
+      },
+      {
+        "type": "process",
+        "text": "KraftZeit += Dauer",
+        "textC": "strength_time += duration",
+        "position": {
+          "x": 320,
+          "y": 960
+        }
+      },
+      {
+        "type": "process",
+        "text": "AusdauerZeit += Dauer",
+        "textC": "cardio_time += duration",
+        "position": {
+          "x": 320,
+          "y": 1024
+        }
+      },
+      {
+        "type": "process",
+        "text": "BeweglichkeitZeit += Dauer",
+        "textC": "flexibility_time += duration",
+        "position": {
+          "x": 320,
+          "y": 1088
+        }
+      },
+      {
+        "type": "process",
+        "text": "i++",
+        "textC": "i += 1",
+        "position": {
+          "x": 576,
+          "y": 1088
+        }
+      },
+      {
+        "type": "process",
+        "text": "DurchschnittIntensität = SummeIntensität / Anzahl Tage",
+        "textC": "avg_intensity = total_intensity / num_days",
+        "position": {
+          "x": 704,
+          "y": 576
+        }
+      },
+      {
+        "type": "process",
+        "text": "ProzentKraft = (KraftZeit / GesamtZeit) * 100",
+        "textC": "strength_percent = (strength_time / total_time) * 100",
+        "position": {
+          "x": 704,
+          "y": 640
+        }
+      },
+      {
+        "type": "process",
+        "text": "ProzentAusdauer = (AusdauerZeit / GesamtZeit) * 100",
+        "textC": "cardio_percent = (cardio_time / total_time) * 100",
+        "position": {
+          "x": 704,
+          "y": 704
+        }
+      },
+      {
+        "type": "process",
+        "text": "ProzentBeweglichkeit = (BeweglichkeitZeit / GesamtZeit) * 100",
+        "textC": "flexibility_percent = (flexibility_time / total_time) * 100",
+        "position": {
+          "x": 704,
+          "y": 768
+        }
+      },
+      {
+        "type": "decision",
+        "text": "ProzentKraft < 20?",
+        "textC": "strength_percent < 20",
+        "position": {
+          "x": 704,
+          "y": 832
+        }
+      },
+      {
+        "type": "decision",
+        "text": "ProzentAusdauer < 20?",
+        "textC": "cardio_percent < 20",
+        "position": {
+          "x": 704,
+          "y": 896
+        }
+      },
+      {
+        "type": "decision",
+        "text": "ProzentBeweglichkeit < 20?",
+        "textC": "flexibility_percent < 20",
+        "position": {
+          "x": 704,
+          "y": 960
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Mehr Krafttraining",
+        "textC": "print(f'Empfehlung: Mehr Krafttraining (aktuell {strength_percent:.1f}%)')",
+        "position": {
+          "x": 832,
+          "y": 832
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Mehr Ausdauer",
+        "textC": "print(f'Empfehlung: Mehr Ausdauertraining (aktuell {cardio_percent:.1f}%)')",
+        "position": {
+          "x": 832,
+          "y": 896
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Mehr Beweglichkeit",
+        "textC": "print(f'Empfehlung: Mehr Beweglichkeitstraining (aktuell {flexibility_percent:.1f}%)')",
+        "position": {
+          "x": 832,
+          "y": 960
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Gut ausgewogen",
+        "textC": "print('Sehr gut! Dein Training ist ausgewogen.')",
+        "position": {
+          "x": 832,
+          "y": 1024
+        }
+      }
+    ],
+    "optional": [
+      {
+        "type": "decision",
+        "text": "GesamtZeit > 180?",
+        "textC": "total_time > 180",
+        "position": {
+          "x": 64,
+          "y": 128
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Pause einlegen",
+        "textC": "print('Achtung: Lege einen Ruhetag ein!')",
+        "position": {
+          "x": 64,
+          "y": 192
+        }
+      }
+    ]
+  },
+  "solution": {
+    "connections": [
+      ["Start", "Eingabe: Anzahl Tage", "ja"],
+      ["Eingabe: Anzahl Tage", "GesamtZeit = 0", "ja"],
+      ["GesamtZeit = 0", "KraftZeit = 0", "ja"],
+      ["KraftZeit = 0", "AusdauerZeit = 0", "ja"],
+      ["AusdauerZeit = 0", "BeweglichkeitZeit = 0", "ja"],
+      ["BeweglichkeitZeit = 0", "SummeIntensität = 0", "ja"],
+      ["SummeIntensität = 0", "i = 0", "ja"],
+      ["i = 0", "i < Anzahl Tage?", "ja"],
+      ["i < Anzahl Tage?", "Eingabe: Trainingsart", "ja"],
+      ["i < Anzahl Tage?", "DurchschnittIntensität = SummeIntensität / Anzahl Tage", "nein"],
+      ["Eingabe: Trainingsart", "Eingabe: Dauer", "ja"],
+      ["Eingabe: Dauer", "Eingabe: Intensität", "ja"],
+      ["Eingabe: Intensität", "GesamtZeit += Dauer", "ja"],
+      ["GesamtZeit += Dauer", "SummeIntensität += Intensität", "ja"],
+      ["SummeIntensität += Intensität", "Trainingsart == 1?", "ja"],
+      ["Trainingsart == 1?", "KraftZeit += Dauer", "ja"],
+      ["Trainingsart == 1?", "Trainingsart == 2?", "nein"],
+      ["Trainingsart == 2?", "AusdauerZeit += Dauer", "ja"],
+      ["Trainingsart == 2?", "BeweglichkeitZeit += Dauer", "nein"],
+      ["KraftZeit += Dauer", "i++", "ja"],
+      ["AusdauerZeit += Dauer", "i++", "ja"],
+      ["BeweglichkeitZeit += Dauer", "i++", "ja"],
+      ["i++", "i < Anzahl Tage?", "ja"],
+      ["DurchschnittIntensität = SummeIntensität / Anzahl Tage", "ProzentKraft = (KraftZeit / GesamtZeit) * 100", "ja"],
+      ["ProzentKraft = (KraftZeit / GesamtZeit) * 100", "ProzentAusdauer = (AusdauerZeit / GesamtZeit) * 100", "ja"],
+      ["ProzentAusdauer = (AusdauerZeit / GesamtZeit) * 100", "ProzentBeweglichkeit = (BeweglichkeitZeit / GesamtZeit) * 100", "ja"],
+      ["ProzentBeweglichkeit = (BeweglichkeitZeit / GesamtZeit) * 100", "ProzentKraft < 20?", "ja"],
+      ["ProzentKraft < 20?", "Ausgabe: Mehr Krafttraining", "ja"],
+      ["ProzentKraft < 20?", "ProzentAusdauer < 20?", "nein"],
+      ["ProzentAusdauer < 20?", "Ausgabe: Mehr Ausdauer", "ja"],
+      ["ProzentAusdauer < 20?", "ProzentBeweglichkeit < 20?", "nein"],
+      ["ProzentBeweglichkeit < 20?", "Ausgabe: Mehr Beweglichkeit", "ja"],
+      ["ProzentBeweglichkeit < 20?", "Ausgabe: Gut ausgewogen", "nein"],
+      ["Ausgabe: Mehr Krafttraining", "Ende", "ja"],
+      ["Ausgabe: Mehr Ausdauer", "Ende", "ja"],
+      ["Ausgabe: Mehr Beweglichkeit", "Ende", "ja"],
+      ["Ausgabe: Gut ausgewogen", "Ende", "ja"]
+    ],
+    "initialPositions": [
+      {"text": "Start", "x": 576, "y": 64},
+      {"text": "Ende", "x": 576, "y": 1024},
+      {"text": "Eingabe: Anzahl Tage", "x": 576, "y": 128},
+      {"text": "GesamtZeit = 0", "x": 576, "y": 192},
+      {"text": "KraftZeit = 0", "x": 576, "y": 256},
+      {"text": "AusdauerZeit = 0", "x": 576, "y": 320},
+      {"text": "BeweglichkeitZeit = 0", "x": 576, "y": 384},
+      {"text": "SummeIntensität = 0", "x": 576, "y": 448},
+      {"text": "i = 0", "x": 576, "y": 512},
+      {"text": "i < Anzahl Tage?", "x": 576, "y": 576},
+      {"text": "Eingabe: Trainingsart", "x": 576, "y": 640},
+      {"text": "Eingabe: Dauer", "x": 576, "y": 704},
+      {"text": "Eingabe: Intensität", "x": 576, "y": 768},
+      {"text": "GesamtZeit += Dauer", "x": 576, "y": 832},
+      {"text": "SummeIntensität += Intensität", "x": 576, "y": 896},
+      {"text": "Trainingsart == 1?", "x": 448, "y": 960},
+      {"text": "Trainingsart == 2?", "x": 448, "y": 1024},
+      {"text": "KraftZeit += Dauer", "x": 320, "y": 960},
+      {"text": "AusdauerZeit += Dauer", "x": 320, "y": 1024},
+      {"text": "BeweglichkeitZeit += Dauer", "x": 320, "y": 1088},
+      {"text": "i++", "x": 576, "y": 1088},
+      {"text": "DurchschnittIntensität = SummeIntensität / Anzahl Tage", "x": 704, "y": 576},
+      {"text": "ProzentKraft = (KraftZeit / GesamtZeit) * 100", "x": 704, "y": 640},
+      {"text": "ProzentAusdauer = (AusdauerZeit / GesamtZeit) * 100", "x": 704, "y": 704},
+      {"text": "ProzentBeweglichkeit = (BeweglichkeitZeit / GesamtZeit) * 100", "x": 704, "y": 768},
+      {"text": "ProzentKraft < 20?", "x": 704, "y": 832},
+      {"text": "ProzentAusdauer < 20?", "x": 704, "y": 896},
+      {"text": "ProzentBeweglichkeit < 20?", "x": 704, "y": 960},
+      {"text": "Ausgabe: Mehr Krafttraining", "x": 832, "y": 832},
+      {"text": "Ausgabe: Mehr Ausdauer", "x": 832, "y": 896},
+      {"text": "Ausgabe: Mehr Beweglichkeit", "x": 832, "y": 960},
+      {"text": "Ausgabe: Gut ausgewogen", "x": 832, "y": 1024}
+    ]
+  }
+}

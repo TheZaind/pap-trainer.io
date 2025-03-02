@@ -2,11 +2,12 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"="width=device-width, initial-scale=1.0">
     <title>PAP (Programmablaufplan) Trainer</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leader-line-new@1.1.9/leader-line.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         /* Fix for input/output blocks */
         .input-output {
@@ -20,38 +21,22 @@
 
         /* Fix for decision blocks */
         .decision {
-            transform: none !important;
-            clip-path: none !important;
-            background: var(--decision-color);
             position: relative;
+            width: 90px !important;
+            height: 90px !important;
+            background: var(--decision-color) !important;
         }
 
-        .decision::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: inherit;
-            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-            z-index: 0;
-        }
-
-        .decision span {
-            position: relative;
-            z-index: 1;
+        /* Fix width for decision blocks in sidebar */
+        .sidebar .decision {
+            width: 70px !important;
+            height: 70px !important;
+            margin: 16px auto !important;
         }
 
         /* Ensure dragged elements appear above others */
         .pap-shape.dragging {
             z-index: 1000 !important;
-        }
-
-        /* Fix width for decision blocks in sidebar */
-        .sidebar .decision {
-            width: 64px !important;
-            height: 64px !important;
         }
 
         /* Additional CSS for solution display */
@@ -65,46 +50,82 @@
             50% { opacity: 1; }
             100% { opacity: 0.9; }
         }
+        
+        /* Hint container styling */
+        .hint-container {
+            background-color: var(--container-bg);
+            border-left: 4px solid var(--secondary-color);
+            padding: 10px 15px;
+            margin-top: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .hint-container.visible {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
-        /* Error screen styling */
-        .error-screen {
-            position: fixed;
+        .text-style-switch {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 24px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            z-index: 9999;
+            background-color: var(--secondary-color);
+            transition: .4s;
+            border-radius: 24px;
         }
-
-        .error-screen button {
-            padding: 0.5rem 1rem;
-            font-size: 1.2rem;
-            cursor: pointer;
-            background: var(--primary-color);
-            border: none;
-            border-radius: 4px;
-            color: white;
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        input:checked + .slider:before {
+            transform: translateX(36px);
         }
     </style>
 </head>
 <body>
     <div class="header-bar">
         <div class="title-nav">
-            <button id="return-btn" class="nav-btn" data-action="return">🏠 Level Auswahl</button>
+            <button onclick="returnToLevelSelection()" class="nav-btn">🏠 Level Auswahl</button>
             <h1>PAP Trainer</h1>
-            <button id="help-btn" class="nav-btn" data-action="help">❓ Hilfe</button>
+            <button onclick="toggleHelp()" class="nav-btn">❓ Hilfe</button>
         </div>
         <div class="progress-container">
-            <div class="progress-bar">
-                <div class="progress-fill" id="xp-progress"></div>
-            </div>
             <div class="stats-bar">
                 <div class="stat">
                     <span class="stat-icon">⭐</span>
@@ -119,39 +140,19 @@
                     <span>Gelöst: <span id="solved">0</span></span>
                 </div>
             </div>
-        </div>
-        <div class="lives">
-            <span id="life1">❤️</span>
-            <span id="life2">❤️</span>
-            <span id="life3">❤️</span>
-        </div>
-    </div>
-    
-    <div class="level-selection" id="level-selection">
-        <button id="unlock-all" class="unlock-all-btn" data-action="unlock-all">🔓 Alle Level freischalten</button>
-        <div class="level-grid">
-            <!-- Levels will be dynamically added here -->
-        </div>
-    </div>
-
-    <div class="main-container" style="display: none;">
-        <div class="task-panel">
-            <div class="task-info">
-                <h3>Aktuelle Aufgabe</h3>
-                <p id="task-text" class="task-description"></p>
-                <div class="task-controls">
-                    <div class="history-btns">
-                        <button class="history-btn" id="undo-btn" title="Rückgängig (Ctrl+Z)" data-action="undo">↩️</button>
-                        <button class="history-btn" id="redo-btn" title="Wiederholen (Ctrl+Y)" data-action="redo">↪️</button>
-                    </div>
-                    <div class="task-nav">
-                        <button id="solution-btn" class="solution-btn" title="Lösung anzeigen" data-action="solution">💡</button>
-                        <button id="check-btn" class="check-btn" title="Überprüfen" data-action="check">✅</button>
-                        <button id="clear-btn" class="clear-btn" title="Löschen" data-action="clear">🗑️</button>
-                    </div>
-                </div>
+            <div id="xp-progress-container">
+                <div id="xp-progress"></div>
             </div>
         </div>
+    </div>
+<div class="level-selection" id="level-selection">
+    <button id="unlock-all" class="unlock-all-btn">🔓 Alle Level freischalten</button>
+    <div class="level-grid">
+        <!-- Levels will be dynamically added here -->
+    </div>
+</div>
+
+<div class="main-container" style="display: none;">
         <div class="sidebar">
             <div class="shape-container">
                 <div class="shape-title">🔄 Ablaufsteuerung</div>
@@ -206,6 +207,35 @@
         <div class="drawing-area" id="drawing-area">
             <!-- PAP blocks will be placed here -->
         </div>
+
+        <div class="task-panel">
+            <div class="task-info">
+                <h3>Aktuelle Aufgabe</h3>
+                <p id="task-text" class="task-description"></p>
+                <div class="hint-container" id="hint-container">
+                    <strong>💡 Tipp:</strong> <span id="hint-text"></span>
+                </div>
+                <div class="task-controls">
+                    <div class="history-btns">
+                        <button class="history-btn" id="undo-btn" title="Rückgängig (Ctrl+Z)">↩️</button>
+                        <button class="history-btn" id="redo-btn" title="Wiederholen (Ctrl+Y)">↪️</button>
+                    </div>
+                    <div class="task-nav">
+                        <button onclick="toggleHint()" class="hint-btn" title="Tipp anzeigen">💡</button>
+                        <button onclick="toggleSolution()" class="solution-btn" title="Lösung anzeigen">🔍</button>
+                        <button onclick="checkSolution()" class="check-btn" title="Überprüfen">✅</button>
+                        <button onclick="clearDrawingArea(); saveState()" class="clear-btn" title="Löschen">🗑️</button>
+                    </div>
+                    <div class="text-style-switch">
+                        <label class="switch">
+                            <input type="checkbox" id="text-style-toggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span>Textstil wechseln</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="mini-map" id="mini-map">
@@ -215,7 +245,7 @@
     </div>
 
     <div class="help-panel" id="help-panel">
-        <button id="close-help-btn" class="close-help" data-action="close-help">×</button>
+        <button class="close-help" onclick="toggleHelp()">×</button>
         <h2>PAP-Elemente erklärt</h2>
         
         <div class="shape-example">
@@ -275,98 +305,9 @@
         </ul>
     </div>
 
-    <!-- Load modules in correct order, defer to ensure DOM is ready -->
-    <script src="js/pap-core.js" defer></script>
-    <script src="js/pap-tasks.js" defer></script>
-    <script src="js/pap-ui.js" defer></script>
-    <script>
-        // Initialize application once all modules are loaded
-        async function initializeApp() {
-            try {
-                // Wait for all required modules
-                const modules = ['PAPCore', 'PAPUI', 'PAPTasks'];
-                while (!modules.every(m => window[m])) {
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                }
-
-                // Add event listeners after modules are ready
-                document.querySelectorAll('[data-action]').forEach(element => {
-                    element.addEventListener('click', (e) => {
-                        const action = e.currentTarget.dataset.action;
-                        try {
-                            switch (action) {
-                                case 'return': // Level selection
-                                    if (PAPUI.returnToLevelSelection) {
-                                        PAPUI.returnToLevelSelection();
-                                    }
-                                    break;
-                                case 'help':
-                                case 'close-help':
-                                    if (PAPUI.toggleHelp) {
-                                        PAPUI.toggleHelp();
-                                    }
-                                    break;
-                                case 'solution':
-                                    if (PAPTasks.toggleSolution) {
-                                        PAPTasks.toggleSolution();
-                                    }
-                                    break;
-                                case 'check':
-                                    if (PAPTasks.checkSolution) {
-                                        PAPTasks.checkSolution();
-                                    }
-                                    break;
-                                case 'clear':
-                                    if (PAPCore.clearDrawingArea && PAPUI.saveState) {
-                                        PAPCore.clearDrawingArea();
-                                        PAPUI.saveState();
-                                    }
-                                    break;
-                                case 'undo':
-                                    if (PAPUI.undo) {
-                                        PAPUI.undo();
-                                    }
-                                    break;
-                                case 'redo':
-                                    if (PAPUI.redo) {
-                                        PAPUI.redo();
-                                    }
-                                    break;
-                                case 'unlock-all':
-                                    if (PAPTasks.tasks && PAPUI.showFeedback) {
-                                        PAPTasks.tasks.forEach(task => PAPTasks.unlockedLevels.add(task.id));
-                                        PAPTasks.saveLevelProgress();
-                                        PAPUI.initializeLevelSelection();
-                                        PAPUI.showFeedback('Alle Level wurden freigeschaltet!', true);
-                                    }
-                                    break;
-                            }
-                        } catch (error) {
-                            console.error(`Error executing action ${action}:`, error);
-                            PAPUI?.showFeedback?.(`Fehler bei der Aktion: ${error.message}`, false);
-                        }
-                    });
-                });
-
-                console.log('Application initialized successfully');
-            } catch (error) {
-                console.error('Initialization error:', error);
-                document.body.innerHTML = `
-                    <div class="error-screen">
-                        <h2>⚠️ Fehler beim Laden</h2>
-                        <p>${error.message}</p>
-                        <button onclick="location.reload()">Neu laden</button>
-                    </div>
-                `;
-            }
-        }
-
-        // Start initialization when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeApp);
-        } else {
-            initializeApp();
-        }
-    </script>
+    <script src="js/pap-functions.js"></script>
+    <script src="js/handle_correct.js"></script>
+    <script src="js/gamification.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>

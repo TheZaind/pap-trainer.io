@@ -1,0 +1,213 @@
+{
+  "id": 1,
+  "title": "Zoll in Zentimeter - Rechner",
+  "description": "# Programm zur Umrechnung von Zoll in Zentimeter \n\n## Funktionsweise:\n1. Der Benutzer gibt eine Zahl in Zoll (Inch) ein.\n2. Diese Zahl wird in Zentimeter umgerechnet.\n3. Das Ergebnis in Zentimetern wird ausgegeben.\n4. Das Programm beendet sich.",
+  "hints": [
+    "## Schritte des Programms:\n1. **Eingabe**: Der Benutzer gibt eine Zahl in Zoll (Inch) ein.\n2. **Umrechnung**: Die eingegebene Zahl wird mit 2.54 multipliziert, um Zentimeter zu berechnen.\n3. **Ausgabe**: Das Ergebnis in Zentimetern wird ausgegeben.",
+    "## Formel zur Umrechnung:\n\\[ \\text{Zentimeter} = \\text{Zoll} \\times 2.54 \\]"
+  ],
+  "availableBlocks": {
+    "required": [
+      {
+        "type": "start-end",
+        "text": "Start",
+        "textC": "Start",
+        "position": {
+          "x": 640,
+          "y": 64
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: inch",
+        "textC": "inches = float(input('Länge in Zoll: '))",
+        "position": {
+          "x": 640,
+          "y": 192
+        }
+      },
+      {
+        "type": "process",
+        "text": "cm = inch * 2,54",
+        "textC": "centimeters = inches * 2.54",
+        "position": {
+          "x": 640,
+          "y": 320
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: cm",
+        "textC": "print(f'{inches} Zoll = {centimeters:.2f} cm')",
+        "position": {
+          "x": 640,
+          "y": 448
+        }
+      },
+      {
+        "type": "start-end",
+        "text": "Ende",
+        "textC": "End",
+        "position": {
+          "x": 640,
+          "y": 576
+        }
+      }
+    ],
+    "optional": [
+      {
+        "type": "input",
+        "text": "Eingabe: cm",
+        "textC": "centimeters = float(input('Länge in cm: '))",
+        "position": {
+          "x": 64,
+          "y": 128
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: meter",
+        "textC": "meters = float(input('Länge in m: '))",
+        "position": {
+          "x": 128,
+          "y": 128
+        }
+      },
+      {
+        "type": "process",
+        "text": "inch = cm * 2,54",
+        "textC": "inches = centimeters / 2.54",
+        "position": {
+          "x": 64,
+          "y": 256
+        }
+      },
+      {
+        "type": "process",
+        "text": "cm = inch * 2,",
+        "textC": "centimeters = inches * 2.0",
+        "position": {
+          "x": 128,
+          "y": 256
+        }
+      },
+      {
+        "type": "process",
+        "text": "inch = cm * 2,5",
+        "textC": "inches = centimeters * 2.5",
+        "position": {
+          "x": 192,
+          "y": 256
+        }
+      },
+      {
+        "type": "decision",
+        "text": "",
+        "textC": "",
+        "position": {
+          "x": 192,
+          "y": 544
+        }
+      }
+    ]
+  },
+  "solution": {
+    "connections": [
+      [
+        "Start",
+        "Eingabe: inch",
+        "ja"
+      ],
+      [
+        "Eingabe: inch",
+        "cm = inch * 2,54",
+        "ja"
+      ],
+      [
+        "Ausgabe: cm",
+        "Ende",
+        "ja"
+      ],
+      [
+        "cm = inch * 2,54",
+        "Ausgabe: cm",
+        "ja"
+      ]
+    ],
+    "controlPoints": [
+      {
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      {
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      {
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      {
+        "offsetX": 0,
+        "offsetY": 0
+      }
+    ],
+    "initialPositions": [
+      {
+        "text": "Start",
+        "x": 640,
+        "y": 64
+      },
+      {
+        "text": "Eingabe: inch",
+        "x": 640,
+        "y": 192
+      },
+      {
+        "text": "cm = inch * 2,54",
+        "x": 640,
+        "y": 320
+      },
+      {
+        "text": "Ausgabe: cm",
+        "x": 640,
+        "y": 448
+      },
+      {
+        "text": "Ende",
+        "x": 640,
+        "y": 576
+      },
+      {
+        "text": "Eingabe: cm",
+        "x": 64,
+        "y": 128
+      },
+      {
+        "text": "Eingabe: meter",
+        "x": 128,
+        "y": 128
+      },
+      {
+        "text": "inch = cm * 2,54",
+        "x": 64,
+        "y": 256
+      },
+      {
+        "text": "cm = inch * 2,",
+        "x": 128,
+        "y": 256
+      },
+      {
+        "text": "inch = cm * 2,5",
+        "x": 192,
+        "y": 256
+      },
+      {
+        "text": "",
+        "x": 192,
+        "y": 544
+      }
+    ]
+  }
+}

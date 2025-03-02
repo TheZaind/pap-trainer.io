@@ -1,0 +1,203 @@
+{
+  "id": 7,
+  "title": "Mengenrabatt-Rechner",
+  "description": "### Beispielanwendung\nEin Online-Shop möchte einen Mengenrabatt für Großbestellungen einführen.\n\n## Aufgabe\nErstelle ein Programm, das den Gesamtpreis einer Bestellung unter Berücksichtigung von Mengenrabatten berechnet:\n\n- Ab 10 Stück: 5% Rabatt\n- Ab 20 Stück: 10% Rabatt\n- Ab 50 Stück: 15% Rabatt\n\n## Eingaben\n1. Einzelpreis pro Stück (in €)\n2. Bestellmenge\n\n## Beispiel\n> Bei 15€ pro Stück und 25 Stück:\n> - Normalpreis: 375€\n> - Mit 10% Rabatt: 337,50€",
+  "hints": [
+    "💡 **Tipp:**\n- Verwende Verzweigungen für die verschiedenen Rabattstufen\n- Berechne erst den Gesamtpreis, dann den Rabatt"
+  ],
+  "availableBlocks": {
+    "required": [
+      {
+        "type": "start-end",
+        "text": "Start",
+        "textC": "Start",
+        "position": {
+          "x": 576,
+          "y": 64
+        }
+      },
+      {
+        "type": "start-end",
+        "text": "Ende",
+        "textC": "End",
+        "position": {
+          "x": 576,
+          "y": 640
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Einzelpreis",
+        "textC": "price = float(input())",
+        "position": {
+          "x": 576,
+          "y": 128
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Menge",
+        "textC": "quantity = int(input())",
+        "position": {
+          "x": 576,
+          "y": 192
+        }
+      },
+      {
+        "type": "process",
+        "text": "Gesamtpreis = Einzelpreis * Menge",
+        "textC": "total = price * quantity",
+        "position": {
+          "x": 576,
+          "y": 256
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Menge >= 50?",
+        "textC": "quantity >= 50",
+        "position": {
+          "x": 576,
+          "y": 320
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Menge >= 20?",
+        "textC": "quantity >= 20",
+        "position": {
+          "x": 448,
+          "y": 384
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Menge >= 10?",
+        "textC": "quantity >= 10",
+        "position": {
+          "x": 320,
+          "y": 448
+        }
+      },
+      {
+        "type": "process",
+        "text": "Rabatt = 15%",
+        "textC": "discount = 15",
+        "position": {
+          "x": 704,
+          "y": 384
+        }
+      },
+      {
+        "type": "process",
+        "text": "Rabatt = 10%",
+        "textC": "discount = 10",
+        "position": {
+          "x": 576,
+          "y": 448
+        }
+      },
+      {
+        "type": "process",
+        "text": "Rabatt = 5%",
+        "textC": "discount = 5",
+        "position": {
+          "x": 448,
+          "y": 512
+        }
+      },
+      {
+        "type": "process",
+        "text": "Rabatt = 0%",
+        "textC": "discount = 0",
+        "position": {
+          "x": 320,
+          "y": 512
+        }
+      },
+      {
+        "type": "process",
+        "text": "Endpreis = Gesamtpreis * (1 - Rabatt/100)",
+        "textC": "final_price = total * (1 - discount/100)",
+        "position": {
+          "x": 576,
+          "y": 576
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Endpreis",
+        "textC": "print(f'Endpreis: {final_price:.2f}€')",
+        "position": {
+          "x": 576,
+          "y": 640
+        }
+      }
+    ],
+    "optional": [
+      {
+        "type": "process",
+        "text": "Rabatt = Gesamtpreis * 0.1",
+        "textC": "discount = total * 0.1",
+        "position": {
+          "x": 64,
+          "y": 256
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Rabatt",
+        "textC": "print(f'Rabatt: {discount:.2f}€')",
+        "position": {
+          "x": 64,
+          "y": 320
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Gesamtpreis > 1000?",
+        "textC": "total > 1000",
+        "position": {
+          "x": 64,
+          "y": 384
+        }
+      }
+    ]
+  },
+  "solution": {
+    "connections": [
+      ["Start", "Eingabe: Einzelpreis", "ja"],
+      ["Eingabe: Einzelpreis", "Eingabe: Menge", "ja"],
+      ["Eingabe: Menge", "Gesamtpreis = Einzelpreis * Menge", "ja"],
+      ["Gesamtpreis = Einzelpreis * Menge", "Menge >= 50?", "ja"],
+      ["Menge >= 50?", "Rabatt = 15%", "ja"],
+      ["Menge >= 50?", "Menge >= 20?", "nein"],
+      ["Menge >= 20?", "Rabatt = 10%", "ja"],
+      ["Menge >= 20?", "Menge >= 10?", "nein"],
+      ["Menge >= 10?", "Rabatt = 5%", "ja"],
+      ["Menge >= 10?", "Rabatt = 0%", "nein"],
+      ["Rabatt = 15%", "Endpreis = Gesamtpreis * (1 - Rabatt/100)", "ja"],
+      ["Rabatt = 10%", "Endpreis = Gesamtpreis * (1 - Rabatt/100)", "ja"],
+      ["Rabatt = 5%", "Endpreis = Gesamtpreis * (1 - Rabatt/100)", "ja"],
+      ["Rabatt = 0%", "Endpreis = Gesamtpreis * (1 - Rabatt/100)", "ja"],
+      ["Endpreis = Gesamtpreis * (1 - Rabatt/100)", "Ausgabe: Endpreis", "ja"],
+      ["Ausgabe: Endpreis", "Ende", "ja"]
+    ],
+    "initialPositions": [
+      {"text": "Start", "x": 576, "y": 64},
+      {"text": "Ende", "x": 576, "y": 640},
+      {"text": "Eingabe: Einzelpreis", "x": 576, "y": 128},
+      {"text": "Eingabe: Menge", "x": 576, "y": 192},
+      {"text": "Gesamtpreis = Einzelpreis * Menge", "x": 576, "y": 256},
+      {"text": "Menge >= 50?", "x": 576, "y": 320},
+      {"text": "Menge >= 20?", "x": 448, "y": 384},
+      {"text": "Menge >= 10?", "x": 320, "y": 448},
+      {"text": "Rabatt = 15%", "x": 704, "y": 384},
+      {"text": "Rabatt = 10%", "x": 576, "y": 448},
+      {"text": "Rabatt = 5%", "x": 448, "y": 512},
+      {"text": "Rabatt = 0%", "x": 320, "y": 512},
+      {"text": "Endpreis = Gesamtpreis * (1 - Rabatt/100)", "x": 576, "y": 576},
+      {"text": "Ausgabe: Endpreis", "x": 576, "y": 640}
+    ]
+  }
+}

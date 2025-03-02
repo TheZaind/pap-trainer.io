@@ -1,0 +1,121 @@
+{
+  "id": 3,
+  "title": "Temperaturumrechner",
+  "description": "### Beispielanwendung\nErstelle einen einfachen Temperaturumrechner, der Celsius in Fahrenheit umrechnet.\n\n## Aufgabe\nSchreibe ein Programm, das eine Temperatur in Celsius einliest und diese in Fahrenheit umrechnet.\n\n## Formel\nFahrenheit = (Celsius * 9/5) + 32\n\n## Beispiel\n> 20°C = 68°F\n> 0°C = 32°F",
+  "hints": [
+    "💡 **Tipp:**\n- Du brauchst:\n1. Eine Eingabe für die Celsius-Temperatur\n2. Eine Berechnung mit der Formel\n3. Eine Ausgabe des Ergebnisses"
+  ],
+  "availableBlocks": {
+    "required": [
+      {
+        "type": "start-end",
+        "text": "Start",
+        "textC": "Start",
+        "position": {
+          "x": 576,
+          "y": 64
+        }
+      },
+      {
+        "type": "start-end",
+        "text": "Ende",
+        "textC": "End",
+        "position": {
+          "x": 576,
+          "y": 448
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Celsius",
+        "textC": "celsius = float(input('Temperatur in °C: '))",
+        "position": {
+          "x": 576,
+          "y": 192
+        }
+      },
+      {
+        "type": "process",
+        "text": "Fahrenheit = (Celsius * 9/5) + 32",
+        "textC": "fahrenheit = (celsius * 9/5) + 32",
+        "position": {
+          "x": 576,
+          "y": 256
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Fahrenheit",
+        "textC": "print(f'{celsius}°C = {fahrenheit:.1f}°F')",
+        "position": {
+          "x": 576,
+          "y": 320
+        }
+      }
+    ],
+    "optional": [
+      {
+        "type": "input",
+        "text": "Eingabe: Einheit",
+        "textC": "unit = input('Einheit (C/F): ').upper()",
+        "position": {
+          "x": 64,
+          "y": 128
+        }
+      },
+      {
+        "type": "process",
+        "text": "Celsius = Fahrenheit",
+        "textC": "celsius = (fahrenheit - 32) * 5/9",
+        "position": {
+          "x": 64,
+          "y": 256
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Celsius",
+        "textC": "print(f'{fahrenheit}°F = {celsius:.1f}°C')",
+        "position": {
+          "x": 128,
+          "y": 256
+        }
+      }
+    ]
+  },
+  "solution": {
+    "connections": [
+      ["Start", "Eingabe: Celsius", "ja"],
+      ["Eingabe: Celsius", "Fahrenheit = (Celsius * 9/5) + 32", "ja"],
+      ["Fahrenheit = (Celsius * 9/5) + 32", "Ausgabe: Fahrenheit", "ja"],
+      ["Ausgabe: Fahrenheit", "Ende", "ja"]
+    ],
+    "initialPositions": [
+      {
+        "text": "Start",
+        "x": 576,
+        "y": 64
+      },
+      {
+        "text": "Ende",
+        "x": 576,
+        "y": 448
+      },
+      {
+        "text": "Eingabe: Celsius",
+        "x": 576,
+        "y": 192
+      },
+      {
+        "text": "Fahrenheit = (Celsius * 9/5) + 32",
+        "x": 576,
+        "y": 256
+      },
+      {
+        "text": "Ausgabe: Fahrenheit",
+        "x": 576,
+        "y": 320
+      }
+    ]
+  }
+}

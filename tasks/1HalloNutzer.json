@@ -1,0 +1,161 @@
+{
+  "id": 2,
+  "title": "Benutzerbegrüßungsprogramm",
+  "description": "### Beispielanwendung  \nStell dir vor, du entwickelst eine Registrierungsseite für eine Webseite oder eine Kasse in einem Geschäft, die Kunden freundlich begrüßen soll.  \nDieses Programm kann als Grundlage für eine solche Anwendung dienen.  \n\n## Aufgabe  \nErstelle ein kleines Programm, mit dem ein Benutzer seinen Namen eingeben kann.  \nDas Programm soll dann eine personalisierte Begrüßung ausgeben.  \n\n## Anforderungen  \n- Das Programm soll eine Texteingabe für den Namen ermöglichen.  \n- Nach der Eingabe gibt es eine Begrüßung in der Form:  \n  _\"Hallo [Name]\"_",
+  "hints": [
+    "💡 **Tipp:**  \n- Du brauchst nur eine \n**Eingabe** + **Ausgabe**"
+  ],
+  "availableBlocks": {
+    "required": [
+      {
+        "type": "start-end",
+        "text": "Start",
+        "textC": "Start",
+        "position": {
+          "x": 576,
+          "y": 64
+        }
+      },
+      {
+        "type": "start-end",
+        "text": "Ende",
+        "textC": "End",
+        "position": {
+          "x": 576,
+          "y": 448
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Name",
+        "textC": "name = input()",
+        "position": {
+          "x": 576,
+          "y": 192
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Hallo + \"Name\"",
+        "textC": "print('Hallo ' + name)",
+        "position": {
+          "x": 576,
+          "y": 320
+        }
+      }
+    ],
+    "optional": [
+      {
+        "type": "input",
+        "text": "Eingabe: Alter",
+        "textC": "age = input()",
+        "position": {
+          "x": 64,
+          "y": 128
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Hallo + \"Max\"",
+        "textC": "print('Hallo Max')",
+        "position": {
+          "x": 64,
+          "y": 256
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Name",
+        "textC": "print(name)",
+        "position": {
+          "x": 128,
+          "y": 256
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Einkommen",
+        "textC": "income = input()",
+        "position": {
+          "x": 128,
+          "y": 128
+        }
+      }
+    ]
+  },
+  "solution": {
+    "connections": [
+      [
+        "Start",
+        "Eingabe: Name",
+        "ja"
+      ],
+      [
+        "Eingabe: Name",
+        "Ausgabe: Hallo + \"Name\"",
+        "ja"
+      ],
+      [
+        "Ausgabe: Hallo + \"Name\"",
+        "Ende",
+        "ja"
+      ]
+    ],
+    "controlPoints": [
+      {
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      {
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      {
+        "offsetX": 0,
+        "offsetY": 0
+      }
+    ],
+    "initialPositions": [
+      {
+        "text": "Start",
+        "x": 576,
+        "y": 64
+      },
+      {
+        "text": "Ende",
+        "x": 576,
+        "y": 448
+      },
+      {
+        "text": "Eingabe: Name",
+        "x": 576,
+        "y": 192
+      },
+      {
+        "text": "Ausgabe: Hallo + \"Name\"",
+        "x": 576,
+        "y": 320
+      },
+      {
+        "text": "Eingabe: Alter",
+        "x": 64,
+        "y": 128
+      },
+      {
+        "text": "Ausgabe: Hallo + \"Max\"",
+        "x": 64,
+        "y": 256
+      },
+      {
+        "text": "Ausgabe: Name",
+        "x": 128,
+        "y": 256
+      },
+      {
+        "text": "Eingabe: Einkommen",
+        "x": 128,
+        "y": 128
+      }
+    ]
+  }
+}

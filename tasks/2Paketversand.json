@@ -1,0 +1,240 @@
+{
+  "id": 6,
+  "title": "Paketversand-Kalkulator",
+  "description": "### Beispielanwendung\nEin Online-Shop benötigt einen Kalkulator für Versandkosten, der verschiedene Paketgrößen und Versandoptionen berücksichtigt.\n\n## Aufgabe\nErstelle ein Programm, das die Versandkosten eines Pakets berechnet:\n\n### Paketgrößen und Grundpreise:\n- S (bis 2kg): 4,99€\n- M (bis 5kg): 6,99€\n- L (bis 10kg): 9,99€\n- XL (über 10kg): 14,99€\n\n### Zusatzoptionen:\n- Express-Versand: +5€\n- Versicherung: +2€\n\n### Eingaben:\n1. Gewicht des Pakets in kg\n2. Express-Versand (ja/nein)\n3. Versicherung (ja/nein)\n\n## Beispiel\n> Gewicht: 4,5kg\n> Express: ja\n> Versicherung: ja\n> → Paketgröße: M (6,99€) + Express (5€) + Versicherung (2€) = 13,99€",
+  "hints": [
+    "💡 **Tipp:**\n- Bestimme zuerst die Paketgröße anhand des Gewichts\n- Addiere dann die gewählten Zusatzoptionen"
+  ],
+  "availableBlocks": {
+    "required": [
+      {
+        "type": "start-end",
+        "text": "Start",
+        "textC": "Start",
+        "position": {
+          "x": 576,
+          "y": 64
+        }
+      },
+      {
+        "type": "start-end",
+        "text": "Ende",
+        "textC": "End",
+        "position": {
+          "x": 576,
+          "y": 832
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Gewicht",
+        "textC": "weight = float(input())",
+        "position": {
+          "x": 576,
+          "y": 128
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Express?",
+        "textC": "express = input() == 'ja'",
+        "position": {
+          "x": 576,
+          "y": 192
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Versicherung?",
+        "textC": "insurance = input() == 'ja'",
+        "position": {
+          "x": 576,
+          "y": 256
+        }
+      },
+      {
+        "type": "process",
+        "text": "Grundpreis = 0",
+        "textC": "base_price = 0",
+        "position": {
+          "x": 576,
+          "y": 320
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Gewicht <= 2?",
+        "textC": "weight <= 2",
+        "position": {
+          "x": 576,
+          "y": 384
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Gewicht <= 5?",
+        "textC": "weight <= 5",
+        "position": {
+          "x": 448,
+          "y": 448
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Gewicht <= 10?",
+        "textC": "weight <= 10",
+        "position": {
+          "x": 320,
+          "y": 512
+        }
+      },
+      {
+        "type": "process",
+        "text": "Grundpreis = 4.99",
+        "textC": "base_price = 4.99",
+        "position": {
+          "x": 704,
+          "y": 448
+        }
+      },
+      {
+        "type": "process",
+        "text": "Grundpreis = 6.99",
+        "textC": "base_price = 6.99",
+        "position": {
+          "x": 576,
+          "y": 512
+        }
+      },
+      {
+        "type": "process",
+        "text": "Grundpreis = 9.99",
+        "textC": "base_price = 9.99",
+        "position": {
+          "x": 448,
+          "y": 576
+        }
+      },
+      {
+        "type": "process",
+        "text": "Grundpreis = 14.99",
+        "textC": "base_price = 14.99",
+        "position": {
+          "x": 320,
+          "y": 576
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Express == ja?",
+        "textC": "express",
+        "position": {
+          "x": 576,
+          "y": 640
+        }
+      },
+      {
+        "type": "process",
+        "text": "Grundpreis += 5",
+        "textC": "base_price += 5",
+        "position": {
+          "x": 704,
+          "y": 704
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Versicherung == ja?",
+        "textC": "insurance",
+        "position": {
+          "x": 576,
+          "y": 704
+        }
+      },
+      {
+        "type": "process",
+        "text": "Grundpreis += 2",
+        "textC": "base_price += 2",
+        "position": {
+          "x": 704,
+          "y": 768
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Grundpreis",
+        "textC": "print(f'Versandkosten: {base_price:.2f}€')",
+        "position": {
+          "x": 576,
+          "y": 768
+        }
+      }
+    ],
+    "optional": [
+      {
+        "type": "decision",
+        "text": "Gewicht > 31.5?",
+        "textC": "weight > 31.5",
+        "position": {
+          "x": 64,
+          "y": 128
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Zu schwer",
+        "textC": "print('Paket zu schwer!')",
+        "position": {
+          "x": 64,
+          "y": 192
+        }
+      }
+    ]
+  },
+  "solution": {
+    "connections": [
+      ["Start", "Eingabe: Gewicht", "ja"],
+      ["Eingabe: Gewicht", "Eingabe: Express?", "ja"],
+      ["Eingabe: Express?", "Eingabe: Versicherung?", "ja"],
+      ["Eingabe: Versicherung?", "Grundpreis = 0", "ja"],
+      ["Grundpreis = 0", "Gewicht <= 2?", "ja"],
+      ["Gewicht <= 2?", "Grundpreis = 4.99", "ja"],
+      ["Gewicht <= 2?", "Gewicht <= 5?", "nein"],
+      ["Gewicht <= 5?", "Grundpreis = 6.99", "ja"],
+      ["Gewicht <= 5?", "Gewicht <= 10?", "nein"],
+      ["Gewicht <= 10?", "Grundpreis = 9.99", "ja"],
+      ["Gewicht <= 10?", "Grundpreis = 14.99", "nein"],
+      ["Grundpreis = 4.99", "Express == ja?", "ja"],
+      ["Grundpreis = 6.99", "Express == ja?", "ja"],
+      ["Grundpreis = 9.99", "Express == ja?", "ja"],
+      ["Grundpreis = 14.99", "Express == ja?", "ja"],
+      ["Express == ja?", "Grundpreis += 5", "ja"],
+      ["Express == ja?", "Versicherung == ja?", "nein"],
+      ["Grundpreis += 5", "Versicherung == ja?", "ja"],
+      ["Versicherung == ja?", "Grundpreis += 2", "ja"],
+      ["Versicherung == ja?", "Ausgabe: Grundpreis", "nein"],
+      ["Grundpreis += 2", "Ausgabe: Grundpreis", "ja"],
+      ["Ausgabe: Grundpreis", "Ende", "ja"]
+    ],
+    "initialPositions": [
+      {"text": "Start", "x": 576, "y": 64},
+      {"text": "Ende", "x": 576, "y": 832},
+      {"text": "Eingabe: Gewicht", "x": 576, "y": 128},
+      {"text": "Eingabe: Express?", "x": 576, "y": 192},
+      {"text": "Eingabe: Versicherung?", "x": 576, "y": 256},
+      {"text": "Grundpreis = 0", "x": 576, "y": 320},
+      {"text": "Gewicht <= 2?", "x": 576, "y": 384},
+      {"text": "Gewicht <= 5?", "x": 448, "y": 448},
+      {"text": "Gewicht <= 10?", "x": 320, "y": 512},
+      {"text": "Grundpreis = 4.99", "x": 704, "y": 448},
+      {"text": "Grundpreis = 6.99", "x": 576, "y": 512},
+      {"text": "Grundpreis = 9.99", "x": 448, "y": 576},
+      {"text": "Grundpreis = 14.99", "x": 320, "y": 576},
+      {"text": "Express == ja?", "x": 576, "y": 640},
+      {"text": "Grundpreis += 5", "x": 704, "y": 704},
+      {"text": "Versicherung == ja?", "x": 576, "y": 704},
+      {"text": "Grundpreis += 2", "x": 704, "y": 768},
+      {"text": "Ausgabe: Grundpreis", "x": 576, "y": 768}
+    ]
+  }
+}

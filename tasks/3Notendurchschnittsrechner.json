@@ -1,0 +1,350 @@
+{
+  "id": 11,
+  "title": "Erweiterter Notendurchschnittsrechner",
+  "description": "### Beispielanwendung\nEin Schüler möchte seinen Notendurchschnitt berechnen, wobei Hauptfächer doppelt zählen sollen.\n\n## Aufgabe\nErstelle ein Programm, das:\n1. Die Anzahl der Noten einliest\n2. Für jede Note fragt, ob es ein Hauptfach ist (ja/nein)\n3. Die Note einliest (1-6)\n4. Den gewichteten Durchschnitt berechnet\n5. Eine Bewertung ausgibt:\n   - 1,0-1,5: Sehr gut\n   - 1,6-2,5: Gut\n   - 2,6-3,5: Befriedigend\n   - 3,6-4,5: Ausreichend\n   - ab 4,6: Nicht bestanden\n\n## Beispiel\nMathe (Hauptfach): 2\nDeutsch (Hauptfach): 3\nSport: 1\n→ Gewichteter Durchschnitt: 2,2 (Gut)",
+  "hints": [
+    "💡 **Tipp:**\n- Verwende eine Schleife für die Noteneingabe\n- Zähle die Gewichtung separat\n- Prüfe die Gültigkeit der Noten (1-6)"
+  ],
+  "availableBlocks": {
+    "required": [
+      {
+        "type": "start-end",
+        "text": "Start",
+        "textC": "Start",
+        "position": {
+          "x": 576,
+          "y": 64
+        }
+      },
+      {
+        "type": "start-end",
+        "text": "Ende",
+        "textC": "End",
+        "position": {
+          "x": 576,
+          "y": 832
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Anzahl Noten",
+        "textC": "num_grades = int(input('Anzahl Noten: '))",
+        "position": {
+          "x": 576,
+          "y": 128
+        }
+      },
+      {
+        "type": "process",
+        "text": "Summe = 0",
+        "textC": "total = 0",
+        "position": {
+          "x": 576,
+          "y": 192
+        }
+      },
+      {
+        "type": "process",
+        "text": "Gewichtung = 0",
+        "textC": "weight_sum = 0",
+        "position": {
+          "x": 576,
+          "y": 256
+        }
+      },
+      {
+        "type": "process",
+        "text": "i = 0",
+        "textC": "i = 0",
+        "position": {
+          "x": 576,
+          "y": 320
+        }
+      },
+      {
+        "type": "decision",
+        "text": "i < Anzahl Noten?",
+        "textC": "i < num_grades",
+        "position": {
+          "x": 576,
+          "y": 384
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Hauptfach? (ja/nein)",
+        "textC": "is_major = input('Hauptfach? (ja/nein): ').lower() == 'ja'",
+        "position": {
+          "x": 576,
+          "y": 448
+        }
+      },
+      {
+        "type": "input",
+        "text": "Eingabe: Note",
+        "textC": "grade = float(input('Note (1-6): '))",
+        "position": {
+          "x": 576,
+          "y": 512
+        }
+      },
+      {
+        "type": "decision",
+        "text": "1 <= Note <= 6?",
+        "textC": "1 <= grade <= 6",
+        "position": {
+          "x": 576,
+          "y": 576
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Hauptfach == ja?",
+        "textC": "is_major",
+        "position": {
+          "x": 576,
+          "y": 640
+        }
+      },
+      {
+        "type": "process",
+        "text": "Summe += Note * 2",
+        "textC": "total += grade * 2",
+        "position": {
+          "x": 448,
+          "y": 704
+        }
+      },
+      {
+        "type": "process",
+        "text": "Gewichtung += 2",
+        "textC": "weight_sum += 2",
+        "position": {
+          "x": 448,
+          "y": 768
+        }
+      },
+      {
+        "type": "process",
+        "text": "Summe += Note",
+        "textC": "total += grade",
+        "position": {
+          "x": 704,
+          "y": 704
+        }
+      },
+      {
+        "type": "process",
+        "text": "Gewichtung += 1",
+        "textC": "weight_sum += 1",
+        "position": {
+          "x": 704,
+          "y": 768
+        }
+      },
+      {
+        "type": "process",
+        "text": "i++",
+        "textC": "i += 1",
+        "position": {
+          "x": 576,
+          "y": 832
+        }
+      },
+      {
+        "type": "process",
+        "text": "Durchschnitt = Summe / Gewichtung",
+        "textC": "average = total / weight_sum",
+        "position": {
+          "x": 576,
+          "y": 896
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Durchschnitt <= 1.5?",
+        "textC": "average <= 1.5",
+        "position": {
+          "x": 576,
+          "y": 960
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Durchschnitt <= 2.5?",
+        "textC": "average <= 2.5",
+        "position": {
+          "x": 448,
+          "y": 1024
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Durchschnitt <= 3.5?",
+        "textC": "average <= 3.5",
+        "position": {
+          "x": 320,
+          "y": 1088
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Durchschnitt <= 4.5?",
+        "textC": "average <= 4.5",
+        "position": {
+          "x": 192,
+          "y": 1152
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Sehr gut",
+        "textC": "print(f'Durchschnitt: {average:.1f} (Sehr gut)')",
+        "position": {
+          "x": 704,
+          "y": 1024
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Gut",
+        "textC": "print(f'Durchschnitt: {average:.1f} (Gut)')",
+        "position": {
+          "x": 576,
+          "y": 1088
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Befriedigend",
+        "textC": "print(f'Durchschnitt: {average:.1f} (Befriedigend)')",
+        "position": {
+          "x": 448,
+          "y": 1152
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Ausreichend",
+        "textC": "print(f'Durchschnitt: {average:.1f} (Ausreichend)')",
+        "position": {
+          "x": 320,
+          "y": 1216
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Nicht bestanden",
+        "textC": "print(f'Durchschnitt: {average:.1f} (Nicht bestanden)')",
+        "position": {
+          "x": 192,
+          "y": 1216
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Ungültige Note",
+        "textC": "print('Fehler: Note muss zwischen 1 und 6 liegen!')",
+        "position": {
+          "x": 704,
+          "y": 576
+        }
+      }
+    ],
+    "optional": [
+      {
+        "type": "process",
+        "text": "Note = 0",
+        "textC": "grade = 0",
+        "position": {
+          "x": 64,
+          "y": 128
+        }
+      },
+      {
+        "type": "output",
+        "text": "Ausgabe: Durchschnitt",
+        "textC": "print(f'Durchschnitt: {average:.1f}')",
+        "position": {
+          "x": 64,
+          "y": 192
+        }
+      },
+      {
+        "type": "decision",
+        "text": "Note == 0?",
+        "textC": "grade == 0",
+        "position": {
+          "x": 64,
+          "y": 256
+        }
+      }
+    ]
+  },
+  "solution": {
+    "connections": [
+      ["Start", "Eingabe: Anzahl Noten", "ja"],
+      ["Eingabe: Anzahl Noten", "Summe = 0", "ja"],
+      ["Summe = 0", "Gewichtung = 0", "ja"],
+      ["Gewichtung = 0", "i = 0", "ja"],
+      ["i = 0", "i < Anzahl Noten?", "ja"],
+      ["i < Anzahl Noten?", "Eingabe: Hauptfach? (ja/nein)", "ja"],
+      ["i < Anzahl Noten?", "Durchschnitt = Summe / Gewichtung", "nein"],
+      ["Eingabe: Hauptfach? (ja/nein)", "Eingabe: Note", "ja"],
+      ["Eingabe: Note", "1 <= Note <= 6?", "ja"],
+      ["1 <= Note <= 6?", "Hauptfach == ja?", "ja"],
+      ["1 <= Note <= 6?", "Ausgabe: Ungültige Note", "nein"],
+      ["Hauptfach == ja?", "Summe += Note * 2", "ja"],
+      ["Hauptfach == ja?", "Summe += Note", "nein"],
+      ["Summe += Note * 2", "Gewichtung += 2", "ja"],
+      ["Summe += Note", "Gewichtung += 1", "ja"],
+      ["Gewichtung += 2", "i++", "ja"],
+      ["Gewichtung += 1", "i++", "ja"],
+      ["i++", "i < Anzahl Noten?", "ja"],
+      ["Durchschnitt = Summe / Gewichtung", "Durchschnitt <= 1.5?", "ja"],
+      ["Durchschnitt <= 1.5?", "Ausgabe: Sehr gut", "ja"],
+      ["Durchschnitt <= 1.5?", "Durchschnitt <= 2.5?", "nein"],
+      ["Durchschnitt <= 2.5?", "Ausgabe: Gut", "ja"],
+      ["Durchschnitt <= 2.5?", "Durchschnitt <= 3.5?", "nein"],
+      ["Durchschnitt <= 3.5?", "Ausgabe: Befriedigend", "ja"],
+      ["Durchschnitt <= 3.5?", "Durchschnitt <= 4.5?", "nein"],
+      ["Durchschnitt <= 4.5?", "Ausgabe: Ausreichend", "ja"],
+      ["Durchschnitt <= 4.5?", "Ausgabe: Nicht bestanden", "nein"],
+      ["Ausgabe: Sehr gut", "Ende", "ja"],
+      ["Ausgabe: Gut", "Ende", "ja"],
+      ["Ausgabe: Befriedigend", "Ende", "ja"],
+      ["Ausgabe: Ausreichend", "Ende", "ja"],
+      ["Ausgabe: Nicht bestanden", "Ende", "ja"],
+      ["Ausgabe: Ungültige Note", "Eingabe: Note", "ja"]
+    ],
+    "initialPositions": [
+      {"text": "Start", "x": 576, "y": 64},
+      {"text": "Ende", "x": 576, "y": 832},
+      {"text": "Eingabe: Anzahl Noten", "x": 576, "y": 128},
+      {"text": "Summe = 0", "x": 576, "y": 192},
+      {"text": "Gewichtung = 0", "x": 576, "y": 256},
+      {"text": "i = 0", "x": 576, "y": 320},
+      {"text": "i < Anzahl Noten?", "x": 576, "y": 384},
+      {"text": "Eingabe: Hauptfach? (ja/nein)", "x": 576, "y": 448},
+      {"text": "Eingabe: Note", "x": 576, "y": 512},
+      {"text": "1 <= Note <= 6?", "x": 576, "y": 576},
+      {"text": "Hauptfach == ja?", "x": 576, "y": 640},
+      {"text": "Summe += Note * 2", "x": 448, "y": 704},
+      {"text": "Gewichtung += 2", "x": 448, "y": 768},
+      {"text": "Summe += Note", "x": 704, "y": 704},
+      {"text": "Gewichtung += 1", "x": 704, "y": 768},
+      {"text": "i++", "x": 576, "y": 832},
+      {"text": "Durchschnitt = Summe / Gewichtung", "x": 576, "y": 896},
+      {"text": "Durchschnitt <= 1.5?", "x": 576, "y": 960},
+      {"text": "Durchschnitt <= 2.5?", "x": 448, "y": 1024},
+      {"text": "Durchschnitt <= 3.5?", "x": 320, "y": 1088},
+      {"text": "Durchschnitt <= 4.5?", "x": 192, "y": 1152},
+      {"text": "Ausgabe: Sehr gut", "x": 704, "y": 1024},
+      {"text": "Ausgabe: Gut", "x": 576, "y": 1088},
+      {"text": "Ausgabe: Befriedigend", "x": 448, "y": 1152},
+      {"text": "Ausgabe: Ausreichend", "x": 320, "y": 1216},
+      {"text": "Ausgabe: Nicht bestanden", "x": 192, "y": 1216},
+      {"text": "Ausgabe: Ungültige Note", "x": 704, "y": 576}
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "pap-trainer.io-main",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "leader-line": "^1.0.7",
+    "marked": "^15.0.7"
+  }
+}
