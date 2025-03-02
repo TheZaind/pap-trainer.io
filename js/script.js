@@ -26,69 +26,78 @@ let isCodeStyle = false; // Add code style state
 
 let tasks = [];
 
+// List of available task files - this replaces directory listing for GitHub Pages compatibility
+const availableTaskFiles = [
+    '1Cm-Zoll-Rechner.json',
+    '1HalloNutzer.json',
+    '1Temperaturumrechner.json',
+    '1Trinkgeldrechner.json',
+    '2GeradeZahlen.json',
+    '2Paketversand.json',
+    '2Rabattrechner.json',
+    '2Zinsrechner.json',
+    '3Durchschnittsalter.json',
+    '3FitnessTracker.json',
+    '3Notendurchschnittsrechner.json',
+    '3Verdoppeln-und-Summieren.json'
+];
+
 // Load tasks from JSON files dynamically
 async function loadTasks() {
     try {
-        // First, get the list of all JSON files in the tasks directory
-        const response = await fetch('tasks/');
-        if (!response.ok) {
-            throw new Error('Failed to list task files');
-        }
-        
-        const text = await response.text();
-        // Create a temporary element to parse the HTML response
-        const parser = new DOMParser();
-        const htmlDoc = parser.parseFromString(text, 'text/html');
-        
-        // Extract all links that end with .json
-        const taskFileLinks = Array.from(htmlDoc.querySelectorAll('a'))
-            .filter(a => a.href.endsWith('.json'))
-            .map(a => a.href.split('/').pop());
-            
         tasks = [];
         
-        // Load each task file
-        for (const fileName of taskFileLinks) {
-            const response = await fetch(`tasks/${fileName}`);
-            if (!response.ok) throw new Error(`Failed to load ${fileName}`);
-            const task = await response.json();
-            
-            // Extract difficulty level from filename (first character)
-            const difficultyMatch = fileName.match(/^(\d)/);
-            const difficulty = difficultyMatch ? parseInt(difficultyMatch[1]) : 5; // Default to 5 if no number found
-            
-            // Extract the task name without the leading number
-            const nameMatch = fileName.match(/^\d(.*?)\.json$/);
-            const displayName = nameMatch ? nameMatch[1] : fileName.replace('.json', '');
-            
-            // Add difficulty and displayName to task object
-            task.difficulty = difficulty;
-            task.displayName = displayName;
-            
-            // Convert input/output types to match existing code
-            if (task.availableBlocks?.required) {
-                task.availableBlocks.required = task.availableBlocks.required.map(block => ({
-                    ...block,
-                    type: block.type === 'input' ? 'input-output' : 
-                           block.type === 'output' ? 'input-output' : 
-                           block.type
-                }));
+        // Load each task file from the predefined list
+        for (const fileName of availableTaskFiles) {
+            try {
+                const response = await fetch(`tasks/${fileName}`);
+                if (!response.ok) throw new Error(`Failed to load ${fileName}`);
+                const task = await response.json();
+                
+                // Extract difficulty level from filename (first character)
+                const difficultyMatch = fileName.match(/^(\d)/);
+                const difficulty = difficultyMatch ? parseInt(difficultyMatch[1]) : 5; // Default to 5 if no number found
+                
+                // Extract the task name without the leading number
+                const nameMatch = fileName.match(/^\d(.*?)\.json$/);
+                const displayName = nameMatch ? nameMatch[1] : fileName.replace('.json', '');
+                
+                // Add difficulty and displayName to task object
+                task.difficulty = difficulty;
+                task.displayName = displayName;
+                
+                // Convert input/output types to match existing code
+                if (task.availableBlocks?.required) {
+                    task.availableBlocks.required = task.availableBlocks.required.map(block => ({
+                        ...block,
+                        type: block.type === 'input' ? 'input-output' : 
+                               block.type === 'output' ? 'input-output' : 
+                               block.type
+                    }));
+                }
+                if (task.availableBlocks?.optional) {
+                    task.availableBlocks.optional = task.availableBlocks.optional.map(block => ({
+                        ...block,
+                        type: block.type === 'input' ? 'input-output' : 
+                               block.type === 'output' ? 'input-output' : 
+                               block.type
+                    }));
+                }
+                
+                // If no hint exists, provide a default hint
+                if (!task.hint) {
+                    task.hint = "Versuche, die Aufgabenstellung sorgfältig zu lesen und die Logik Schritt für Schritt zu entwickeln.";
+                }
+                
+                tasks.push(task);
+            } catch (error) {
+                console.warn(`Failed to load task: ${fileName}`, error);
+                // Continue with next task instead of failing completely
             }
-            if (task.availableBlocks?.optional) {
-                task.availableBlocks.optional = task.availableBlocks.optional.map(block => ({
-                    ...block,
-                    type: block.type === 'input' ? 'input-output' : 
-                           block.type === 'output' ? 'input-output' : 
-                           block.type
-                }));
-            }
-            
-            // If no hint exists, provide a default hint
-            if (!task.hint) {
-                task.hint = "Versuche, die Aufgabenstellung sorgfältig zu lesen und die Logik Schritt für Schritt zu entwickeln.";
-            }
-            
-            tasks.push(task);
+        }
+
+        if (tasks.length === 0) {
+            throw new Error('No tasks were loaded successfully');
         }
 
         // Sort tasks by difficulty level first, then by id
@@ -106,9 +115,6 @@ async function loadTasks() {
     } catch (error) {
         console.error('Error loading tasks:', error);
         showFeedback('Fehler beim Laden der Aufgaben', false);
-        
-        // Fallback to hardcoded list if directory listing fails
-        fallbackLoadTasks();
     }
 }
 
